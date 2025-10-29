@@ -3,9 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Attendance Management System</title>
+    <title>Attendance Management System (Cloud Edition)</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Use Inter font -->
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+        }
         .fade-in {
             animation: fadeIn 0.3s ease-in;
         }
@@ -20,1993 +25,935 @@
             0%, 100% { transform: scale(1); }
             50% { transform: scale(1.05); }
         }
+        /* Custom scrollbar for better aesthetics */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 8px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background-color: #9ca3af; /* gray-400 */
+            border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background-color: #f3f4f6; /* gray-100 */
+        }
     </style>
 </head>
 <body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen">
-    <div class="container mx-auto px-4 py-8">
-        <!-- Login Section -->
-        <div id="loginSection" class="max-w-md mx-auto">
-            <div class="bg-white rounded-xl shadow-lg p-8">
-                <div class="text-center mb-8">
-                    <h1 class="text-4xl font-bold text-gray-800 mb-2">📚 DICE-M ATTENDANCE</h1>
-                    <p class="text-gray-600">Please select your login type</p>
-                </div>
-                
-                <div class="space-y-4">
-                    <button onclick="showOwnerLogin()" class="w-full px-6 py-3 bg-purple-500 text-white rounded-lg font-medium hover:bg-purple-600 transition-colors">
-                        👑 Owner Login
-                    </button>
-                    <button onclick="showStudentLogin()" class="w-full px-6 py-3 bg-blue-500 text-white rounded-lg font-medium hover:bg-blue-600 transition-colors">
-                        👨‍🎓 Student Login
-                    </button>
-                    <button onclick="showTeacherLogin()" class="w-full px-6 py-3 bg-green-500 text-white rounded-lg font-medium hover:bg-green-600 transition-colors">
-                        👩‍🏫 Teacher Login
-                    </button>
-                </div>
-            </div>
-        </div>
 
-        <!-- Owner Password Section -->
-        <div id="ownerPasswordSection" class="max-w-md mx-auto hidden">
-            <div class="bg-white rounded-xl shadow-lg p-8">
-                <div class="text-center mb-6">
-                    <h2 class="text-2xl font-bold text-gray-800 mb-2">👑 Owner Login</h2>
-                    <p class="text-gray-600">Enter owner password</p>
-                </div>
-                
-                <div class="space-y-4">
-                    <input type="password" id="ownerPassword" placeholder="Enter password" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-purple-500 focus:border-purple-500">
-                    <button onclick="verifyOwnerPassword()" class="w-full px-6 py-3 bg-purple-500 text-white rounded-lg font-medium hover:bg-purple-600 transition-colors">
-                        Login as Owner
-                    </button>
-                    <button onclick="backToLogin()" class="w-full px-6 py-3 bg-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-400 transition-colors">
-                        Back
-                    </button>
-                </div>
-                <p class="text-xs text-gray-500 mt-4 text-center">🔐 Strong password required for security</p>
-            </div>
-        </div>
-
-        <!-- Student Name Selection -->
-        <div id="studentNameSection" class="max-w-md mx-auto hidden">
-            <div class="bg-white rounded-xl shadow-lg p-8">
-                <div class="text-center mb-6">
-                    <h2 class="text-2xl font-bold text-gray-800 mb-2">👨‍🎓 Student Login</h2>
-                    <p class="text-gray-600">Select your name and enter password</p>
-                </div>
-                
-                <div class="space-y-4">
-                    <div class="flex space-x-2">
-                        <button onclick="toggleStudentInputMode('select')" id="studentSelectModeBtn" class="px-3 py-2 bg-blue-500 text-white rounded-md text-sm font-medium">
-                            Select Name
-                        </button>
-                        <button onclick="toggleStudentInputMode('type')" id="studentTypeModeBtn" class="px-3 py-2 bg-gray-300 text-gray-700 rounded-md text-sm font-medium">
-                            Type Name
-                        </button>
-                    </div>
-                    
-                    <select id="studentNameSelect" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                        <option value="">Select your name</option>
-                    </select>
-                    
-                    <input type="text" id="studentNameInput" placeholder="Type your name" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 hidden">
-                    
-                    <input type="password" id="studentPassword" placeholder="Enter your password" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                    <button onclick="loginAsStudent()" class="w-full px-6 py-3 bg-blue-500 text-white rounded-lg font-medium hover:bg-blue-600 transition-colors">
-                        Login as Student
-                    </button>
-                    <button onclick="backToLogin()" class="w-full px-6 py-3 bg-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-400 transition-colors">
-                        Back
-                    </button>
-                </div>
-                <p class="text-xs text-gray-500 mt-4 text-center">Default password for all students: student123</p>
-            </div>
-        </div>
-
-        <!-- Teacher Name Selection -->
-        <div id="teacherNameSection" class="max-w-md mx-auto hidden">
-            <div class="bg-white rounded-xl shadow-lg p-8">
-                <div class="text-center mb-6">
-                    <h2 class="text-2xl font-bold text-gray-800 mb-2">👩‍🏫 Teacher Login</h2>
-                    <p class="text-gray-600">Select your name and enter password</p>
-                </div>
-                
-                <div class="space-y-4">
-                    <div class="flex space-x-2">
-                        <button onclick="toggleTeacherInputMode('select')" id="selectModeBtn" class="px-3 py-2 bg-green-500 text-white rounded-md text-sm font-medium">
-                            Select Name
-                        </button>
-                        <button onclick="toggleTeacherInputMode('type')" id="typeModeBtn" class="px-3 py-2 bg-gray-300 text-gray-700 rounded-md text-sm font-medium">
-                            Type Name
-                        </button>
-                    </div>
-                    
-                    <select id="teacherNameSelect" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-green-500 focus:border-green-500">
-                        <option value="">Select your name</option>
-                    </select>
-                    
-                    <input type="text" id="teacherNameInput" placeholder="Type your name" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-green-500 focus:border-green-500 hidden">
-                    
-                    <input type="password" id="teacherPassword" placeholder="Enter your password" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-green-500 focus:border-green-500">
-                    <button onclick="loginAsTeacher()" class="w-full px-6 py-3 bg-green-500 text-white rounded-lg font-medium hover:bg-green-600 transition-colors">
-                        Login as Teacher
-                    </button>
-                    <button onclick="backToLogin()" class="w-full px-6 py-3 bg-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-400 transition-colors">
-                        Back
-                    </button>
-                </div>
-                <p class="text-xs text-gray-500 mt-4 text-center">Default password for all teachers: teacher123</p>
-            </div>
-        </div>
-
-        <!-- Header (shown after login) -->
-        <div id="mainHeader" class="text-center mb-8 hidden">
-            <h1 class="text-4xl font-bold text-gray-800 mb-2">📚 DICE-M ATTENDANCE</h1>
-            <div class="flex justify-center items-center space-x-4 mb-4">
-                <p class="text-gray-600" id="welcomeMessage">Welcome</p>
-                <button onclick="logout()" class="px-4 py-2 bg-red-500 text-white rounded-lg text-sm hover:bg-red-600 transition-colors">
-                    Logout
-                </button>
-            </div>
-            
-            <!-- Date Navigation (Owner Only) -->
-            <div id="dateNavigation" class="flex justify-center items-center space-x-4 mb-4 hidden">
-                <button onclick="changeDate(-1)" class="px-3 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors">
-                    ← Previous Day
-                </button>
-                <div class="flex items-center space-x-2">
-                    <label class="text-sm font-medium text-gray-700">View Date:</label>
-                    <input type="date" id="currentDatePicker" onchange="setCurrentDate(this.value)" class="border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                </div>
-                <button onclick="changeDate(1)" class="px-3 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors">
-                    Next Day →
-                </button>
-                <button onclick="goToToday()" class="px-3 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors">
-                    📅 Today
-                </button>
-                <button onclick="showDataRecovery()" class="px-3 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors">
-                    🔄 Data Recovery
-                </button>
-            </div>
-            
-
-        </div>
-
-        <!-- Data Recovery Modal -->
-        <div id="dataRecoveryModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
-            <div class="bg-white rounded-xl shadow-xl p-6 max-w-md w-full mx-4">
-                <div class="text-center mb-6">
-                    <h3 class="text-xl font-bold text-gray-800 mb-2">🔄 Data Recovery Center</h3>
-                    <p class="text-gray-600">Restore lost attendance data from backups</p>
-                </div>
-                
-                <div class="space-y-4">
-                    <div class="bg-blue-50 rounded-lg p-4">
-                        <h4 class="font-semibold text-blue-800 mb-2">📊 Current Data Status</h4>
-                        <div class="text-sm text-blue-700" id="dataStatus">
-                            <!-- Status will be populated here -->
-                        </div>
-                    </div>
-                    
-                    <div class="bg-orange-50 rounded-lg p-4">
-                        <h4 class="font-semibold text-orange-800 mb-2">🔄 Available Backups</h4>
-                        <div class="text-sm text-orange-700" id="backupStatus">
-                            <!-- Backup info will be populated here -->
-                        </div>
-                    </div>
-                    
-                    <div class="flex space-x-3">
-                        <button onclick="restoreData()" class="flex-1 px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors">
-                            ✅ Restore Latest Backup
-                        </button>
-                        <button onclick="createManualBackup()" class="flex-1 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors">
-                            💾 Create Backup Now
-                        </button>
-                    </div>
-                    
-                    <button onclick="closeDataRecovery()" class="w-full px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition-colors">
-                        Close
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Navigation (shown after login) -->
-        <div id="mainNavigation" class="flex justify-center mb-8 hidden">
-            <div class="bg-white rounded-lg shadow-md p-2 flex space-x-2" id="navigationTabs">
-                <!-- Navigation will be populated based on user type -->
-            </div>
-        </div>
-
-        <!-- Student Section -->
-        <div id="studentSection" class="section">
-            <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
-                <h2 class="text-2xl font-bold text-gray-800 mb-4 flex items-center">
-                    👨‍🎓 Student Attendance
-                    <span class="ml-4 text-sm bg-blue-100 text-blue-800 px-3 py-1 rounded-full" id="studentDate"></span>
-                </h2>
-                
-                <!-- Add Student Form (Owner Only) -->
-                <div id="addStudentForm" class="mb-6 p-4 bg-blue-50 rounded-lg hidden">
-                    <h3 class="text-lg font-semibold mb-3 text-gray-700">Add New Student</h3>
-                    <div class="flex gap-3">
-                        <input type="text" id="newStudentName" placeholder="Enter student name" class="flex-1 border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                        <button onclick="addStudent()" class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors">Add Student</button>
-                    </div>
-                </div>
-
-                <!-- Individual Student Attendance (Student View) -->
-                <div id="individualStudentView" class="hidden">
-                    <div class="text-center p-8">
-                        <div class="bg-gray-50 rounded-lg p-6 max-w-md mx-auto">
-                            <h3 class="text-xl font-semibold mb-4 text-gray-700" id="currentStudentName">Your Attendance</h3>
-                            <div class="space-y-4">
-                                <div class="text-lg text-gray-600 mb-4">Mark your attendance for today:</div>
-                                <div class="flex justify-center space-x-4">
-                                    <button onclick="markMyAttendance('present')" id="myPresentBtn" class="px-6 py-3 rounded-lg font-medium transition-all duration-200 bg-gray-200 text-gray-700 hover:bg-green-100">
-                                        ✅ Present
-                                    </button>
-                                    <button onclick="markMyAttendance('absent')" id="myAbsentBtn" class="px-6 py-3 rounded-lg font-medium transition-all duration-200 bg-gray-200 text-gray-700 hover:bg-red-100">
-                                        ❌ Absent
-                                    </button>
-                                </div>
-                                <div id="myAttendanceStatus" class="mt-4 text-lg font-medium"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Owner View -->
-                <div id="ownerStudentView" class="hidden">
-                    <div class="grid md:grid-cols-2 gap-6">
-                        <!-- Student List -->
-                        <div>
-                            <h3 class="text-lg font-semibold mb-3 text-gray-700">Mark Attendance</h3>
-                            <div id="studentList" class="space-y-3 max-h-96 overflow-y-auto">
-                                <!-- Students will be populated here -->
-                            </div>
-                        </div>
-                        
-                        <!-- Student Summary -->
-                        <div>
-                            <h3 class="text-lg font-semibold mb-3 text-gray-700">Today's Summary</h3>
-                            <div class="bg-gray-50 rounded-lg p-4 space-y-3">
-                                <div class="flex justify-between items-center">
-                                    <span class="text-green-600 font-medium">✅ Present:</span>
-                                    <span id="studentPresentCount" class="text-2xl font-bold text-green-600">0</span>
-                                </div>
-                                <div class="flex justify-between items-center">
-                                    <span class="text-red-600 font-medium">❌ Absent:</span>
-                                    <span id="studentAbsentCount" class="text-2xl font-bold text-red-600">0</span>
-                                </div>
-                                <div class="flex justify-between items-center border-t pt-3">
-                                    <span class="text-gray-700 font-medium">Total Students:</span>
-                                    <span id="studentTotalCount" class="text-2xl font-bold text-gray-700">0</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Teacher Section -->
-        <div id="teacherSection" class="section hidden">
-            <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
-                <h2 class="text-2xl font-bold text-gray-800 mb-4 flex items-center">
-                    👩‍🏫 Teacher Attendance
-                    <span class="ml-4 text-sm bg-green-100 text-green-800 px-3 py-1 rounded-full" id="teacherDate"></span>
-                </h2>
-                
-                <!-- Add Teacher Form (Owner Only) -->
-                <div id="addTeacherForm" class="mb-6 p-4 bg-green-50 rounded-lg hidden">
-                    <h3 class="text-lg font-semibold mb-3 text-gray-700">Add New Teacher</h3>
-                    <div class="flex gap-3">
-                        <input type="text" id="newTeacherName" placeholder="Enter teacher name" class="flex-1 border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-green-500 focus:border-green-500">
-                        <button onclick="addTeacher()" class="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition-colors">Add Teacher</button>
-                    </div>
-                </div>
-
-                <!-- Individual Teacher Attendance (Teacher View) -->
-                <div id="individualTeacherView" class="hidden">
-                    <div class="text-center p-8">
-                        <div class="bg-gray-50 rounded-lg p-6 max-w-md mx-auto">
-                            <h3 class="text-xl font-semibold mb-4 text-gray-700" id="currentTeacherName">Your Attendance</h3>
-                            <div class="space-y-4">
-                                <div class="text-lg text-gray-600 mb-4">Mark your attendance for today:</div>
-                                <div class="flex justify-center space-x-4">
-                                    <button onclick="markMyTeacherAttendance('present')" id="myTeacherPresentBtn" class="px-6 py-3 rounded-lg font-medium transition-all duration-200 bg-gray-200 text-gray-700 hover:bg-green-100">
-                                        ✅ Present
-                                    </button>
-                                    <button onclick="markMyTeacherAttendance('absent')" id="myTeacherAbsentBtn" class="px-6 py-3 rounded-lg font-medium transition-all duration-200 bg-gray-200 text-gray-700 hover:bg-red-100">
-                                        ❌ Absent
-                                    </button>
-                                </div>
-                                <div id="myTeacherAttendanceStatus" class="mt-4 text-lg font-medium"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Owner View -->
-                <div id="ownerTeacherView" class="hidden">
-                    <div class="grid md:grid-cols-2 gap-6">
-                        <!-- Teacher List -->
-                        <div>
-                            <h3 class="text-lg font-semibold mb-3 text-gray-700">Mark Attendance</h3>
-                            <div id="teacherList" class="space-y-3 max-h-96 overflow-y-auto">
-                                <!-- Teachers will be populated here -->
-                            </div>
-                        </div>
-                        
-                        <!-- Teacher Summary -->
-                        <div>
-                            <h3 class="text-lg font-semibold mb-3 text-gray-700">Today's Summary</h3>
-                            <div class="bg-gray-50 rounded-lg p-4 space-y-3">
-                                <div class="flex justify-between items-center">
-                                    <span class="text-green-600 font-medium">✅ Present:</span>
-                                    <span id="teacherPresentCount" class="text-2xl font-bold text-green-600">0</span>
-                                </div>
-                                <div class="flex justify-between items-center">
-                                    <span class="text-red-600 font-medium">❌ Absent:</span>
-                                    <span id="teacherAbsentCount" class="text-2xl font-bold text-red-600">0</span>
-                                </div>
-                                <div class="flex justify-between items-center border-t pt-3">
-                                    <span class="text-gray-700 font-medium">Total Teachers:</span>
-                                    <span id="teacherTotalCount" class="text-2xl font-bold text-gray-700">0</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Dashboard Section -->
-        <div id="dashboardSection" class="section hidden">
-            <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
-                <h2 class="text-2xl font-bold text-gray-800 mb-4 flex items-center">
-                    📊 Attendance Dashboard
-                </h2>
-                
-                <!-- Dashboard Navigation -->
-                <div class="flex space-x-2 mb-6">
-                    <button onclick="showDashboardView('summary')" id="summaryViewBtn" class="px-4 py-2 bg-blue-500 text-white rounded-md font-medium">
-                        📊 Summary
-                    </button>
-                    <button onclick="showDashboardView('records')" id="recordsViewBtn" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md font-medium">
-                        📋 Detailed Records
-                    </button>
-                    <button onclick="showDashboardView('individual')" id="individualViewBtn" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md font-medium">
-                        👤 Individual History
-                    </button>
-                </div>
-
-                <!-- Summary View -->
-                <div id="summaryView">
-                    <!-- Date Filter -->
-                    <div class="mb-6 flex flex-wrap gap-4 items-center">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">View Period:</label>
-                            <select id="periodFilter" onchange="updateDashboard()" class="border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                                <option value="daily">Daily</option>
-                                <option value="weekly">Weekly</option>
-                                <option value="monthly">Monthly</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Select Date:</label>
-                            <input type="date" id="dashboardDate" onchange="updateDashboard()" class="border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                        </div>
-                    </div>
-
-                    <!-- Summary Cards -->
-                    <div class="grid md:grid-cols-4 gap-4 mb-6">
-                        <div class="bg-blue-50 rounded-lg p-4 text-center">
-                            <div class="text-2xl font-bold text-blue-600" id="dashStudentPresent">0</div>
-                            <div class="text-sm text-blue-800">Students Present</div>
-                        </div>
-                        <div class="bg-red-50 rounded-lg p-4 text-center">
-                            <div class="text-2xl font-bold text-red-600" id="dashStudentAbsent">0</div>
-                            <div class="text-sm text-red-800">Students Absent</div>
-                        </div>
-                        <div class="bg-green-50 rounded-lg p-4 text-center">
-                            <div class="text-2xl font-bold text-green-600" id="dashTeacherPresent">0</div>
-                            <div class="text-sm text-green-800">Teachers Present</div>
-                        </div>
-                        <div class="bg-orange-50 rounded-lg p-4 text-center">
-                            <div class="text-2xl font-bold text-orange-600" id="dashTeacherAbsent">0</div>
-                            <div class="text-sm text-orange-800">Teachers Absent</div>
-                        </div>
-                    </div>
-
-                    <!-- Detailed Reports -->
-                    <div class="grid md:grid-cols-2 gap-6">
-                        <div>
-                            <h3 class="text-lg font-semibold mb-3 text-gray-700">Student Attendance Report</h3>
-                            <div class="bg-gray-50 rounded-lg p-4 max-h-64 overflow-y-auto">
-                                <div id="studentReport" class="space-y-2">
-                                    <!-- Student report will be populated here -->
-                                </div>
-                            </div>
-                        </div>
-                        <div>
-                            <h3 class="text-lg font-semibold mb-3 text-gray-700">Teacher Attendance Report</h3>
-                            <div class="bg-gray-50 rounded-lg p-4 max-h-64 overflow-y-auto">
-                                <div id="teacherReport" class="space-y-2">
-                                    <!-- Teacher report will be populated here -->
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Records View -->
-                <div id="recordsView" class="hidden">
-                    <div class="mb-4 flex flex-wrap gap-4 items-center">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">From Date:</label>
-                            <input type="date" id="recordsFromDate" onchange="loadDetailedRecords()" class="border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">To Date:</label>
-                            <input type="date" id="recordsToDate" onchange="loadDetailedRecords()" class="border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Type:</label>
-                            <select id="recordsType" onchange="loadDetailedRecords()" class="border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                                <option value="all">All</option>
-                                <option value="students">Students Only</option>
-                                <option value="teachers">Teachers Only</option>
-                            </select>
-                        </div>
-                    </div>
-                    
-                    <div class="bg-gray-50 rounded-lg p-4 max-h-96 overflow-y-auto">
-                        <div id="detailedRecords">
-                            <!-- Detailed records will be populated here -->
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Individual History View -->
-                <div id="individualView" class="hidden">
-                    <div class="mb-4 flex flex-wrap gap-4 items-center">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Select Person:</label>
-                            <select id="individualSelect" onchange="loadIndividualHistory()" class="border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                                <option value="">Choose a person</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">From Date:</label>
-                            <input type="date" id="individualFromDate" onchange="loadIndividualHistory()" class="border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">To Date:</label>
-                            <input type="date" id="individualToDate" onchange="loadIndividualHistory()" class="border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                        </div>
-                    </div>
-                    
-                    <div id="individualStats" class="grid md:grid-cols-4 gap-4 mb-4 hidden">
-                        <div class="bg-blue-50 rounded-lg p-3 text-center">
-                            <div class="text-xl font-bold text-blue-600" id="individualPresent">0</div>
-                            <div class="text-xs text-blue-800">Present Days</div>
-                        </div>
-                        <div class="bg-red-50 rounded-lg p-3 text-center">
-                            <div class="text-xl font-bold text-red-600" id="individualAbsent">0</div>
-                            <div class="text-xs text-red-800">Absent Days</div>
-                        </div>
-                        <div class="bg-green-50 rounded-lg p-3 text-center">
-                            <div class="text-xl font-bold text-green-600" id="individualPercentage">0%</div>
-                            <div class="text-xs text-green-800">Attendance Rate</div>
-                        </div>
-                        <div class="bg-gray-50 rounded-lg p-3 text-center">
-                            <div class="text-xl font-bold text-gray-600" id="individualTotal">0</div>
-                            <div class="text-xs text-gray-800">Total Days</div>
-                        </div>
-                    </div>
-                    
-                    <div class="bg-gray-50 rounded-lg p-4 max-h-64 overflow-y-auto">
-                        <div id="individualHistory">
-                            <!-- Individual history will be populated here -->
-                        </div>
-                    </div>
-                </div>
+    <!-- Custom Message Box Modal (Replaces alert() and confirm()) -->
+    <div id="messageBox" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 z-50 flex items-center justify-center fade-in">
+        <div class="bg-white rounded-xl shadow-2xl p-6 max-w-sm w-full transform transition-all duration-300">
+            <h3 id="messageTitle" class="text-xl font-bold mb-3 text-gray-800"></h3>
+            <p id="messageBody" class="text-gray-600 mb-6"></p>
+            <div id="messageActions" class="flex justify-end space-x-3">
+                <button id="messageConfirm" class="hidden px-4 py-2 bg-red-500 text-white font-semibold rounded-lg shadow hover:bg-red-600 transition duration-150">Confirm</button>
+                <button id="messageClose" class="px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg shadow hover:bg-blue-700 transition duration-150">Close</button>
             </div>
         </div>
     </div>
+    
+    <div class="container mx-auto px-4 py-8">
+        
+        <!-- Header & Identity Display -->
+        <div class="flex flex-col sm:flex-row justify-between items-center mb-6 bg-white p-4 rounded-xl shadow-lg">
+            <div class="text-xl font-bold text-gray-800 flex items-center mb-2 sm:mb-0">
+                Attendance Manager
+                <span id="roleTag" class="ml-3 px-3 py-1 text-sm font-semibold rounded-full text-white"></span>
+            </div>
+            <div class="text-sm text-gray-600">
+                <span class="font-semibold">User ID:</span> 
+                <span id="userIdDisplay" class="font-mono text-xs bg-gray-100 p-1 rounded-md cursor-pointer hover:bg-gray-200 transition">Loading...</span>
+            </div>
+        </div>
+        
+        <!-- Login Section -->
+        <div id="loginSection" class="max-w-md mx-auto hidden">
+            <div class="bg-white rounded-xl shadow-lg p-8">
+                <div class="text-center mb-8">
+                    <h1 class="text-4xl font-bold text-gray-800">Welcome</h1>
+                    <p class="text-gray-500 mt-2">Select your role to proceed.</p>
+                </div>
+                <div class="space-y-4">
+                    <button onclick="login('owner')" class="w-full flex items-center justify-center p-4 bg-indigo-600 text-white font-semibold rounded-lg shadow-md hover:bg-indigo-700 transition duration-150">
+                        Owner / Admin
+                    </button>
+                    <button onclick="login('teacher')" class="w-full flex items-center justify-center p-4 bg-green-600 text-white font-semibold rounded-lg shadow-md hover:bg-green-700 transition duration-150">
+                        Teacher
+                    </button>
+                    <button onclick="login('student')" class="w-full flex items-center justify-center p-4 bg-yellow-600 text-white font-semibold rounded-lg shadow-md hover:bg-yellow-700 transition duration-150">
+                        Student
+                    </button>
+                </div>
+            </div>
+        </div>
 
-    <script>
-        // Database simulation using localStorage with permanent date-wise storage
+        <!-- Main Dashboard Section (Hidden by default) -->
+        <div id="dashboardSection" class="hidden grid grid-cols-1 lg:grid-cols-3 gap-6">
+            
+            <!-- Left Column: Attendance Taker / User Management -->
+            <div class="lg:col-span-2 space-y-6">
+                
+                <!-- Attendance Taker -->
+                <div id="attendanceTaker" class="bg-white rounded-xl shadow-lg p-6">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-4">Daily Attendance</h2>
+                    <div class="mb-4 flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4 items-center">
+                        <label for="attendanceDate" class="font-medium text-gray-700">Date:</label>
+                        <input type="date" id="attendanceDate" class="flex-grow p-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 transition duration-150">
+                        <button onclick="loadAttendance()" class="w-full sm:w-auto px-4 py-2 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-600 transition duration-150">Load</button>
+                    </div>
+
+                    <div id="userListContainer" class="max-h-96 overflow-y-auto custom-scrollbar border border-gray-200 rounded-lg p-3">
+                        <!-- User attendance rows will be dynamically inserted here -->
+                        <p id="noUsersMessage" class="text-gray-500 text-center py-4">Select a date and load users.</p>
+                    </div>
+
+                    <div id="saveButtonContainer" class="mt-6 hidden">
+                        <button onclick="saveDailyAttendance()" class="w-full p-3 bg-indigo-600 text-white font-semibold rounded-lg shadow-lg hover:bg-indigo-700 transition duration-150 pulse-success">
+                            Save Daily Attendance
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Owner/Teacher: User Management Section -->
+                <div id="userManagementSection" class="hidden bg-white rounded-xl shadow-lg p-6">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-4">Manage Users</h2>
+                    <div class="space-y-4">
+                        <div class="flex space-x-3">
+                            <input type="text" id="newUserName" placeholder="Name of new user" class="flex-grow p-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 transition duration-150">
+                            <select id="newUserType" class="p-2 border border-gray-300 rounded-lg">
+                                <option value="student">Student</option>
+                                <option value="teacher">Teacher</option>
+                            </select>
+                            <button onclick="addUser()" class="px-4 py-2 bg-green-500 text-white font-semibold rounded-lg shadow-md hover:bg-green-600 transition duration-150">
+                                Add User
+                            </button>
+                        </div>
+                        
+                        <div class="mt-4 border-t pt-4">
+                            <h3 class="text-lg font-semibold mb-2">Current Users:</h3>
+                            <div id="currentUsersList" class="max-h-48 overflow-y-auto custom-scrollbar space-y-2">
+                                <!-- Existing users will be listed here -->
+                                <p class="text-gray-500 text-center py-2">Loading users...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            
+            <!-- Right Column: History & Stats -->
+            <div class="lg:col-span-1 space-y-6">
+
+                <!-- Attendance History -->
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-4">Attendance History</h2>
+                    <div class="space-y-4">
+                        <div>
+                            <label for="historyStartDate" class="block text-sm font-medium text-gray-700">Start Date</label>
+                            <input type="date" id="historyStartDate" class="mt-1 w-full p-2 border border-gray-300 rounded-lg">
+                        </div>
+                        <div>
+                            <label for="historyEndDate" class="block text-sm font-medium text-gray-700">End Date</label>
+                            <input type="date" id="historyEndDate" class="mt-1 w-full p-2 border border-gray-300 rounded-lg">
+                        </div>
+                        <button onclick="viewHistory()" class="w-full p-2 bg-indigo-500 text-white font-semibold rounded-lg shadow-md hover:bg-indigo-600 transition duration-150">
+                            View History
+                        </button>
+                    </div>
+                </div>
+
+                <!-- History Viewer Modal -->
+                <div id="historyModal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-75 z-40 flex items-center justify-center fade-in p-4">
+                    <div class="bg-white rounded-xl shadow-2xl p-6 max-w-4xl w-full h-5/6 flex flex-col">
+                        <h3 class="text-2xl font-bold mb-4 text-gray-800">Attendance Log</h3>
+                        <div id="historyContent" class="flex-grow overflow-y-auto custom-scrollbar border p-3 rounded-lg bg-gray-50">
+                            <!-- History data will be inserted here -->
+                        </div>
+                        <button onclick="closeHistoryModal()" class="mt-4 p-2 bg-red-500 text-white font-semibold rounded-lg shadow hover:bg-red-600 transition duration-150">Close</button>
+                    </div>
+                </div>
+                
+                <!-- Data Recovery/Backup (Owner Only) - Note: Backup functions are removed as Firestore is the source of truth -->
+                <div id="dataRecoverySection" class="hidden bg-white rounded-xl shadow-lg p-6">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-4">Data Persistence (Firestore)</h2>
+                    <p class="text-gray-600">
+                        Data is now automatically synchronized globally using Firebase Firestore. No manual backup/restore is required.
+                        <span class="font-semibold text-green-600">All data is persistent.</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Firebase SDK Imports (MUST be before the main script) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc, onSnapshot, collection, query, where, addDoc, getDocs, updateDoc, deleteDoc, runTransaction } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+
+        // Set Firebase logging level to Debug
+        setLogLevel('Debug');
+
+        // Global variables for Firebase instances
+        let app, db, auth;
+        let userId = null;
+        let isAuthReady = false;
+        
+        // --- 1. FIREBASE INITIALIZATION AND AUTHENTICATION ---
+        
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        let firebaseConfig;
+        try {
+            firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
+        } catch (e) {
+            console.error("Firebase config parsing error:", e);
+            firebaseConfig = {};
+        }
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+
+        /**
+         * Initializes Firebase and authenticates the user.
+         */
+        async function initializeFirebase() {
+            if (Object.keys(firebaseConfig).length > 0) {
+                app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                auth = getAuth(app);
+                
+                onAuthStateChanged(auth, async (user) => {
+                    if (user) {
+                        userId = user.uid;
+                        document.getElementById('userIdDisplay').textContent = userId;
+                        console.log("Firebase Auth Success. User ID:", userId);
+                    } else {
+                        // This case is unlikely due to the sign-in block below, but safe to include.
+                        console.log("No user signed in.");
+                        userId = crypto.randomUUID(); // Fallback UUID if somehow unauthenticated
+                        document.getElementById('userIdDisplay').textContent = "Anonymous: " + userId.substring(0, 8) + "...";
+                    }
+                    isAuthReady = true;
+                    // Proceed with app initialization after auth is ready
+                    window.db = new AttendanceDB(db, appId, userId);
+                    window.initializeAppAfterAuth();
+                });
+
+                try {
+                    if (initialAuthToken) {
+                        await signInWithCustomToken(auth, initialAuthToken);
+                        console.log("Signed in with custom token.");
+                    } else {
+                        await signInAnonymously(auth);
+                        console.log("Signed in anonymously.");
+                    }
+                } catch (error) {
+                    console.error("Firebase Auth Error:", error);
+                    window.showMessageBox('Authentication Failed', `Could not sign in to Firebase. Error: ${error.message}`, false);
+                    // Fallback UUID if auth fails completely
+                    userId = crypto.randomUUID();
+                    window.db = new AttendanceDB(db, appId, userId);
+                    window.initializeAppAfterAuth();
+                }
+            } else {
+                window.showMessageBox('Error', 'Firebase configuration is missing. Cannot use cloud database.', false);
+                isAuthReady = true; // Still allow app to load, but DB will fail.
+                // Fallback for no config (DB operations will fail gracefully)
+                window.db = new new AttendanceDB(null, appId, null);
+                window.initializeAppAfterAuth();
+            }
+        }
+        
+        // --- 2. REWRITTEN ATTENDANCEDB CLASS (Firestore Implementation) ---
+
+        /**
+         * Core database logic, rewritten to use Firebase Firestore.
+         */
         class AttendanceDB {
-            constructor() {
-                this.initializeData();
-                this.createDemoData(); // Add some demo data for testing
-            }
-
-            initializeData() {
-                // Initialize students if not exists
-                if (!localStorage.getItem('students')) {
-                    const students = [];
-                    localStorage.setItem('students', JSON.stringify(students));
-                }
-
-                // Initialize teachers if not exists
-                if (!localStorage.getItem('teachers')) {
-                    const teachers = [];
-                    localStorage.setItem('teachers', JSON.stringify(teachers));
-                }
-
-                // Initialize attendance records if not exists
-                if (!localStorage.getItem('attendanceRecords')) {
-                    localStorage.setItem('attendanceRecords', JSON.stringify({}));
-                }
-
-                // Initialize attendance history for permanent storage
-                if (!localStorage.getItem('attendanceHistory')) {
-                    localStorage.setItem('attendanceHistory', JSON.stringify({}));
-                }
-
-                // Initialize daily login tracking
-                if (!localStorage.getItem('dailyLogins')) {
-                    localStorage.setItem('dailyLogins', JSON.stringify({}));
-                }
-            }
-
-            createDemoData() {
-                // No demo data - users will add their own students and teachers
-            }
-
-            createDemoAttendance() {
-                // No demo attendance - fresh start for users
-            }
-
-            getStudents() {
-                return JSON.parse(localStorage.getItem('students') || '[]');
-            }
-
-            getTeachers() {
-                return JSON.parse(localStorage.getItem('teachers') || '[]');
-            }
-
-            getAttendanceRecords() {
-                return JSON.parse(localStorage.getItem('attendanceRecords') || '{}');
-            }
-
-            saveAttendance(date, type, name, status) {
-                // Save to current day records
-                const records = this.getAttendanceRecords();
-                if (!records[date]) {
-                    records[date] = { students: {}, teachers: {} };
-                }
-                records[date][type][name] = status;
-                localStorage.setItem('attendanceRecords', JSON.stringify(records));
+            constructor(firestoreInstance, appId, userId) {
+                this.db = firestoreInstance;
+                this.appId = appId;
+                this.userId = userId;
+                this.PUBLIC_PATH = `artifacts/${this.appId}/public/data`;
                 
-                // Also save to permanent history
-                this.saveAttendanceToHistory(date, type, name, status);
-            }
-
-            saveAttendanceToHistory(date, type, name, status) {
-                const history = this.getAttendanceHistory();
-                if (!history[date]) {
-                    history[date] = { students: {}, teachers: {} };
+                if (!this.db) {
+                    console.error("Firestore not initialized. Database operations will fail.");
                 }
-                history[date][type][name] = status;
-                localStorage.setItem('attendanceHistory', JSON.stringify(history));
             }
 
-            getAttendanceHistory() {
-                return JSON.parse(localStorage.getItem('attendanceHistory') || '{}');
+            // --- USER MANAGEMENT ---
+
+            /**
+             * Gets the Firestore collection reference for users.
+             * @returns {CollectionReference}
+             */
+            _getUsersCollectionRef() {
+                return collection(this.db, `${this.PUBLIC_PATH}/users`);
             }
 
-            addStudent(name) {
-                const students = this.getStudents();
-                if (!students.includes(name)) {
-                    students.push(name);
-                    localStorage.setItem('students', JSON.stringify(students));
-                    return true;
+            /**
+             * Adds a new student to the Firestore 'users' collection.
+             * @param {string} name - Student name.
+             */
+            async addStudent(name) {
+                if (!this.db) return;
+                try {
+                    await addDoc(this._getUsersCollectionRef(), {
+                        name: name,
+                        type: 'student',
+                        createdAt: new Date().toISOString()
+                    });
+                } catch (error) {
+                    console.error("Error adding student:", error);
+                    window.showMessageBox('Database Error', `Failed to add student ${name}.`, false);
                 }
-                return false;
             }
 
-            addTeacher(name) {
-                const teachers = this.getTeachers();
-                if (!teachers.includes(name)) {
-                    teachers.push(name);
-                    localStorage.setItem('teachers', JSON.stringify(teachers));
-                    return true;
+            /**
+             * Adds a new teacher to the Firestore 'users' collection.
+             * @param {string} name - Teacher name.
+             */
+            async addTeacher(name) {
+                if (!this.db) return;
+                try {
+                    await addDoc(this._getUsersCollectionRef(), {
+                        name: name,
+                        type: 'teacher',
+                        createdAt: new Date().toISOString()
+                    });
+                } catch (error) {
+                    console.error("Error adding teacher:", error);
+                    window.showMessageBox('Database Error', `Failed to add teacher ${name}.`, false);
                 }
-                return false;
             }
 
-            removeStudent(name) {
-                const students = this.getStudents();
-                const index = students.indexOf(name);
-                if (index > -1) {
-                    students.splice(index, 1);
-                    localStorage.setItem('students', JSON.stringify(students));
-                    return true;
+            /**
+             * Deletes a user from the 'users' collection.
+             * @param {string} id - The Firestore document ID of the user.
+             */
+            async deleteUser(id) {
+                if (!this.db) return;
+                try {
+                    await deleteDoc(doc(this._getUsersCollectionRef(), id));
+                } catch (error) {
+                    console.error("Error deleting user:", error);
+                    window.showMessageBox('Database Error', `Failed to delete user ID: ${id}.`, false);
                 }
-                return false;
             }
-
-            removeTeacher(name) {
-                const teachers = this.getTeachers();
-                const index = teachers.indexOf(name);
-                if (index > -1) {
-                    teachers.splice(index, 1);
-                    localStorage.setItem('teachers', JSON.stringify(teachers));
-                    return true;
+            
+            /**
+             * Fetches students and sets up a real-time listener (onSnapshot).
+             * @param {Function} callback - Function to run with the array of students.
+             * @returns {Function} - Unsubscribe function for the listener.
+             */
+            getStudents(callback) {
+                if (!this.db) {
+                    callback([]);
+                    return () => {};
                 }
-                return false;
-            }
-
-            getAttendanceForDate(date) {
-                const records = this.getAttendanceRecords();
-                return records[date] || { students: {}, teachers: {} };
-            }
-
-            getAttendanceForPeriod(startDate, endDate) {
-                // Use history for period data to get all saved records
-                const history = this.getAttendanceHistory();
-                const periodRecords = {};
+                const studentsQuery = query(this._getUsersCollectionRef(), where("type", "==", "student"));
                 
-                for (const date in history) {
-                    if (date >= startDate && date <= endDate) {
-                        periodRecords[date] = history[date];
-                    }
-                }
-                
-                return periodRecords;
-            }
-
-            getAllAttendanceHistory() {
-                return this.getAttendanceHistory();
-            }
-
-            // Login tracking methods
-            getDailyLogins() {
-                return JSON.parse(localStorage.getItem('dailyLogins') || '{}');
-            }
-
-            isAlreadyLoggedIn(date, type, name) {
-                const logins = this.getDailyLogins();
-                return logins[date] && logins[date][type] && logins[date][type].includes(name);
-            }
-
-            markLogin(date, type, name) {
-                const logins = this.getDailyLogins();
-                if (!logins[date]) {
-                    logins[date] = { students: [], teachers: [] };
-                }
-                if (!logins[date][type].includes(name)) {
-                    logins[date][type].push(name);
-                    localStorage.setItem('dailyLogins', JSON.stringify(logins));
-                    return true;
-                }
-                return false;
-            }
-
-            getAttendanceStats(startDate, endDate) {
-                const periodRecords = this.getAttendanceForPeriod(startDate, endDate);
-                const students = this.getStudents();
-                const teachers = this.getTeachers();
-                
-                const stats = {
-                    students: {},
-                    teachers: {},
-                    summary: {
-                        studentPresent: 0,
-                        studentAbsent: 0,
-                        teacherPresent: 0,
-                        teacherAbsent: 0
-                    }
-                };
-                
-                // Initialize individual stats
-                students.forEach(student => {
-                    stats.students[student] = { present: 0, absent: 0, total: 0 };
+                return onSnapshot(studentsQuery, (snapshot) => {
+                    const students = snapshot.docs.map(doc => ({
+                        id: doc.id,
+                        name: doc.data().name,
+                        type: doc.data().type
+                    }));
+                    // Sort by name for consistency
+                    students.sort((a, b) => a.name.localeCompare(b.name));
+                    callback(students);
+                }, (error) => {
+                    console.error("Error getting students:", error);
                 });
-                teachers.forEach(teacher => {
-                    stats.teachers[teacher] = { present: 0, absent: 0, total: 0 };
+            }
+
+            /**
+             * Fetches teachers and sets up a real-time listener (onSnapshot).
+             * @param {Function} callback - Function to run with the array of teachers.
+             * @returns {Function} - Unsubscribe function for the listener.
+             */
+            getTeachers(callback) {
+                if (!this.db) {
+                    callback([]);
+                    return () => {};
+                }
+                const teachersQuery = query(this._getUsersCollectionRef(), where("type", "==", "teacher"));
+
+                return onSnapshot(teachersQuery, (snapshot) => {
+                    const teachers = snapshot.docs.map(doc => ({
+                        id: doc.id,
+                        name: doc.data().name,
+                        type: doc.data().type
+                    }));
+                    // Sort by name for consistency
+                    teachers.sort((a, b) => a.name.localeCompare(b.name));
+                    callback(teachers);
+                }, (error) => {
+                    console.error("Error getting teachers:", error);
                 });
+            }
+
+
+            // --- ATTENDANCE MANAGEMENT ---
+
+            /**
+             * Gets the Firestore collection reference for attendance.
+             * @returns {CollectionReference}
+             */
+            _getAttendanceCollectionRef() {
+                return collection(this.db, `${this.PUBLIC_PATH}/attendance`);
+            }
+
+            /**
+             * Saves the attendance status for a single user on a given date.
+             * Uses the date (YYYY-MM-DD) as the document ID and a combined field key (type_name).
+             * @param {string} date - Date in YYYY-MM-DD format.
+             * @param {'student'|'teacher'} type - User type.
+             * @param {string} name - User name.
+             * @param {string} status - Attendance status ('Present', 'Absent', etc.).
+             */
+            async saveAttendance(date, type, name, status) {
+                if (!this.db) return;
+                const docRef = doc(this._getAttendanceCollectionRef(), date);
+                const fieldKey = `${type}_${name.replace(/ /g, '_')}`; // Use an underscore for spaces in Firestore field names
                 
-                // Calculate stats from period records
-                Object.values(periodRecords).forEach(dayRecord => {
-                    students.forEach(student => {
-                        const status = dayRecord.students && dayRecord.students[student];
-                        if (status) {
-                            stats.students[student].total++;
-                            if (status === 'present') {
-                                stats.students[student].present++;
-                                stats.summary.studentPresent++;
-                            } else if (status === 'absent') {
-                                stats.students[student].absent++;
-                                stats.summary.studentAbsent++;
-                            }
+                try {
+                    // Use setDoc with merge true to update a single field in the document without overwriting others
+                    await setDoc(docRef, { [fieldKey]: status }, { merge: true });
+                } catch (error) {
+                    console.error("Error saving attendance:", error);
+                    window.showMessageBox('Database Error', `Failed to save attendance for ${name} on ${date}.`, false);
+                }
+            }
+
+            /**
+             * Retrieves the attendance record for a specific date.
+             * @param {string} date - Date in YYYY-MM-DD format.
+             * @returns {Promise<Object>} - An object containing attendance status key-value pairs for that date.
+             */
+            async getDailyAttendance(date) {
+                if (!this.db) return {};
+                try {
+                    const docRef = doc(this._getAttendanceCollectionRef(), date);
+                    const docSnap = await getDoc(docRef);
+                    
+                    if (docSnap.exists()) {
+                        return docSnap.data();
+                    } else {
+                        return {};
+                    }
+                } catch (error) {
+                    console.error("Error getting daily attendance:", error);
+                    return {};
+                }
+            }
+
+            /**
+             * Fetches all attendance records between a start and end date.
+             * Since document IDs (dates) are strings, we fetch all and filter client-side for simplicity and to avoid complex index requirements.
+             * @param {string} startDate - Start date in YYYY-MM-DD format.
+             * @param {string} endDate - End date in YYYY-MM-DD format.
+             * @returns {Promise<Object>} - An object where keys are dates and values are the attendance records for that date.
+             */
+            async getAttendanceForPeriod(startDate, endDate) {
+                if (!this.db) return {};
+                try {
+                    const q = query(this._getAttendanceCollectionRef());
+                    const querySnapshot = await getDocs(q);
+                    
+                    const history = {};
+                    querySnapshot.forEach((doc) => {
+                        const date = doc.id;
+                        // Client-side filtering by date string
+                        if (date >= startDate && date <= endDate) {
+                            history[date] = doc.data();
                         }
                     });
-                    
-                    teachers.forEach(teacher => {
-                        const status = dayRecord.teachers && dayRecord.teachers[teacher];
-                        if (status) {
-                            stats.teachers[teacher].total++;
-                            if (status === 'present') {
-                                stats.teachers[teacher].present++;
-                                stats.summary.teacherPresent++;
-                            } else if (status === 'absent') {
-                                stats.teachers[teacher].absent++;
-                                stats.summary.teacherAbsent++;
-                            }
-                        }
-                    });
-                });
-                
-                return stats;
-            }
-        }
-
-        // Initialize database
-        const db = new AttendanceDB();
-        let currentDate = new Date().toISOString().split('T')[0];
-        let currentUser = null;
-        let userType = null;
-
-        // Initialize the application
-        function initializeApp() {
-            showLoginScreen();
-        }
-
-        function showLoginScreen() {
-            // Hide all sections
-            document.querySelectorAll('.section').forEach(s => s.classList.add('hidden'));
-            document.getElementById('mainHeader').classList.add('hidden');
-            document.getElementById('mainNavigation').classList.add('hidden');
-            
-            // Show login sections
-            document.getElementById('loginSection').classList.remove('hidden');
-            document.getElementById('ownerPasswordSection').classList.add('hidden');
-            document.getElementById('studentNameSection').classList.add('hidden');
-            document.getElementById('teacherNameSection').classList.add('hidden');
-        }
-
-        function showOwnerLogin() {
-            document.getElementById('loginSection').classList.add('hidden');
-            document.getElementById('ownerPasswordSection').classList.remove('hidden');
-        }
-
-        function showStudentLogin() {
-            const students = db.getStudents();
-            const select = document.getElementById('studentNameSelect');
-            select.innerHTML = '<option value="">Select your name</option>';
-            
-            students.forEach(student => {
-                const option = document.createElement('option');
-                option.value = student;
-                option.textContent = student;
-                select.appendChild(option);
-            });
-            
-            document.getElementById('loginSection').classList.add('hidden');
-            document.getElementById('studentNameSection').classList.remove('hidden');
-        }
-
-        function showTeacherLogin() {
-            const teachers = db.getTeachers();
-            const select = document.getElementById('teacherNameSelect');
-            select.innerHTML = '<option value="">Select your name</option>';
-            
-            teachers.forEach(teacher => {
-                const option = document.createElement('option');
-                option.value = teacher;
-                option.textContent = teacher;
-                select.appendChild(option);
-            });
-            
-            document.getElementById('loginSection').classList.add('hidden');
-            document.getElementById('teacherNameSection').classList.remove('hidden');
-        }
-
-        function backToLogin() {
-            showLoginScreen();
-        }
-
-        function verifyOwnerPassword() {
-            const password = document.getElementById('ownerPassword').value;
-            if (password === 'Admin@2024') {
-                currentUser = 'Owner';
-                userType = 'owner';
-                showMainInterface();
-            } else {
-                alert('Incorrect password!');
-            }
-        }
-
-        function toggleStudentInputMode(mode) {
-            const selectBtn = document.getElementById('studentSelectModeBtn');
-            const typeBtn = document.getElementById('studentTypeModeBtn');
-            const selectField = document.getElementById('studentNameSelect');
-            const inputField = document.getElementById('studentNameInput');
-            
-            if (mode === 'select') {
-                selectBtn.classList.add('bg-blue-500', 'text-white');
-                selectBtn.classList.remove('bg-gray-300', 'text-gray-700');
-                typeBtn.classList.add('bg-gray-300', 'text-gray-700');
-                typeBtn.classList.remove('bg-blue-500', 'text-white');
-                selectField.classList.remove('hidden');
-                inputField.classList.add('hidden');
-                inputField.value = '';
-            } else {
-                typeBtn.classList.add('bg-blue-500', 'text-white');
-                typeBtn.classList.remove('bg-gray-300', 'text-gray-700');
-                selectBtn.classList.add('bg-gray-300', 'text-gray-700');
-                selectBtn.classList.remove('bg-blue-500', 'text-white');
-                selectField.classList.add('hidden');
-                inputField.classList.remove('hidden');
-                selectField.value = '';
-            }
-        }
-
-        function toggleTeacherInputMode(mode) {
-            const selectBtn = document.getElementById('selectModeBtn');
-            const typeBtn = document.getElementById('typeModeBtn');
-            const selectField = document.getElementById('teacherNameSelect');
-            const inputField = document.getElementById('teacherNameInput');
-            
-            if (mode === 'select') {
-                selectBtn.classList.add('bg-green-500', 'text-white');
-                selectBtn.classList.remove('bg-gray-300', 'text-gray-700');
-                typeBtn.classList.add('bg-gray-300', 'text-gray-700');
-                typeBtn.classList.remove('bg-green-500', 'text-white');
-                selectField.classList.remove('hidden');
-                inputField.classList.add('hidden');
-                inputField.value = '';
-            } else {
-                typeBtn.classList.add('bg-green-500', 'text-white');
-                typeBtn.classList.remove('bg-gray-300', 'text-gray-700');
-                selectBtn.classList.add('bg-gray-300', 'text-gray-700');
-                selectBtn.classList.remove('bg-green-500', 'text-white');
-                selectField.classList.add('hidden');
-                inputField.classList.remove('hidden');
-                selectField.value = '';
-            }
-        }
-
-        function loginAsStudent() {
-            const selectField = document.getElementById('studentNameSelect');
-            const inputField = document.getElementById('studentNameInput');
-            const password = document.getElementById('studentPassword').value;
-            
-            let selectedStudent = '';
-            if (!selectField.classList.contains('hidden')) {
-                selectedStudent = selectField.value;
-            } else {
-                selectedStudent = inputField.value.trim();
-            }
-            
-            if (!selectedStudent) {
-                alert('Please enter or select your name');
-                return;
-            }
-            
-            if (password !== 'student123') {
-                alert('Incorrect password!');
-                return;
-            }
-
-            // Check if already logged in today
-            const today = new Date().toISOString().split('T')[0];
-            if (db.isAlreadyLoggedIn(today, 'students', selectedStudent)) {
-                alert('⚠️ You have already logged in today! Each student can only login once per day.');
-                return;
-            }
-            
-            // Mark login for today
-            db.markLogin(today, 'students', selectedStudent);
-            
-            currentUser = selectedStudent;
-            userType = 'student';
-            showMainInterface();
-        }
-
-        function loginAsTeacher() {
-            const selectField = document.getElementById('teacherNameSelect');
-            const inputField = document.getElementById('teacherNameInput');
-            const password = document.getElementById('teacherPassword').value;
-            
-            let selectedTeacher = '';
-            if (!selectField.classList.contains('hidden')) {
-                selectedTeacher = selectField.value;
-            } else {
-                selectedTeacher = inputField.value.trim();
-            }
-            
-            if (!selectedTeacher) {
-                alert('Please enter or select your name');
-                return;
-            }
-            
-            if (password !== 'teacher123') {
-                alert('Incorrect password!');
-                return;
-            }
-
-            // Check if already logged in today
-            const today = new Date().toISOString().split('T')[0];
-            if (db.isAlreadyLoggedIn(today, 'teachers', selectedTeacher)) {
-                alert('⚠️ You have already logged in today! Each teacher can only login once per day.');
-                return;
-            }
-            
-            // Mark login for today
-            db.markLogin(today, 'teachers', selectedTeacher);
-            
-            currentUser = selectedTeacher;
-            userType = 'teacher';
-            showMainInterface();
-        }
-
-        function showMainInterface() {
-            // Hide login sections
-            document.getElementById('loginSection').classList.add('hidden');
-            document.getElementById('ownerPasswordSection').classList.add('hidden');
-            document.getElementById('studentNameSection').classList.add('hidden');
-            document.getElementById('teacherNameSection').classList.add('hidden');
-            
-            // Show main interface
-            document.getElementById('mainHeader').classList.remove('hidden');
-            document.getElementById('mainNavigation').classList.remove('hidden');
-            
-            // Show date navigation for owner
-            if (userType === 'owner') {
-                document.getElementById('dateNavigation').classList.remove('hidden');
-                document.getElementById('currentDatePicker').value = currentDate;
-            }
-            
-            // Update welcome message
-            document.getElementById('welcomeMessage').textContent = `Welcome, ${currentUser}`;
-            
-            // Setup navigation based on user type
-            setupNavigation();
-            
-            // Initialize data
-            updateDateDisplays();
-            
-            // Initialize live counts
-            updateAllCounts();
-            
-            // Show appropriate section
-            if (userType === 'owner') {
-                showSection('student');
-            } else if (userType === 'student') {
-                showSection('student');
-            } else if (userType === 'teacher') {
-                showSection('teacher');
-            }
-        }
-
-        function changeDate(days) {
-            const date = new Date(currentDate);
-            date.setDate(date.getDate() + days);
-            currentDate = date.toISOString().split('T')[0];
-            document.getElementById('currentDatePicker').value = currentDate;
-            updateDateDisplays();
-            refreshCurrentSection();
-        }
-
-        function setCurrentDate(dateStr) {
-            currentDate = dateStr;
-            updateDateDisplays();
-            refreshCurrentSection();
-        }
-
-        function goToToday() {
-            currentDate = new Date().toISOString().split('T')[0];
-            document.getElementById('currentDatePicker').value = currentDate;
-            updateDateDisplays();
-            refreshCurrentSection();
-        }
-
-        function refreshCurrentSection() {
-            // Refresh the currently visible section
-            if (!document.getElementById('studentSection').classList.contains('hidden')) {
-                loadStudentSection();
-            } else if (!document.getElementById('teacherSection').classList.contains('hidden')) {
-                loadTeacherSection();
-            }
-            updateAllCounts();
-        }
-
-        function setupNavigation() {
-            const navigationTabs = document.getElementById('navigationTabs');
-            navigationTabs.innerHTML = '';
-            
-            if (userType === 'owner') {
-                // Owner sees all tabs
-                navigationTabs.innerHTML = `
-                    <button onclick="showSection('student')" id="studentTab" class="px-6 py-2 rounded-md font-medium transition-all duration-200 bg-blue-500 text-white">
-                        👨‍🎓 Students
-                    </button>
-                    <button onclick="showSection('teacher')" id="teacherTab" class="px-6 py-2 rounded-md font-medium transition-all duration-200 text-gray-600 hover:bg-gray-100">
-                        👩‍🏫 Teachers
-                    </button>
-                    <button onclick="showSection('dashboard')" id="dashboardTab" class="px-6 py-2 rounded-md font-medium transition-all duration-200 text-gray-600 hover:bg-gray-100">
-                        📊 Dashboard
-                    </button>
-                `;
-            } else if (userType === 'student') {
-                // Student sees only student tab
-                navigationTabs.innerHTML = `
-                    <button onclick="showSection('student')" id="studentTab" class="px-6 py-2 rounded-md font-medium transition-all duration-200 bg-blue-500 text-white">
-                        👨‍🎓 My Attendance
-                    </button>
-                `;
-            } else if (userType === 'teacher') {
-                // Teacher sees only teacher tab
-                navigationTabs.innerHTML = `
-                    <button onclick="showSection('teacher')" id="teacherTab" class="px-6 py-2 rounded-md font-medium transition-all duration-200 bg-green-500 text-white">
-                        👩‍🏫 My Attendance
-                    </button>
-                `;
-            }
-        }
-
-        function logout() {
-            currentUser = null;
-            userType = null;
-            showLoginScreen();
-        }
-
-        function updateDateDisplays() {
-            const dateStr = new Date(currentDate).toLocaleDateString('en-US', {
-                weekday: 'long',
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
-            });
-            document.getElementById('studentDate').textContent = dateStr;
-            document.getElementById('teacherDate').textContent = dateStr;
-        }
-
-        function showSection(section) {
-            // Hide all sections
-            document.querySelectorAll('.section').forEach(s => s.classList.add('hidden'));
-            
-            // Remove active class from all tabs
-            document.querySelectorAll('[id$="Tab"]').forEach(tab => {
-                tab.classList.remove('bg-blue-500', 'bg-green-500', 'text-white');
-                tab.classList.add('text-gray-600', 'hover:bg-gray-100');
-            });
-            
-            // Show selected section
-            document.getElementById(section + 'Section').classList.remove('hidden');
-            document.getElementById(section + 'Section').classList.add('fade-in');
-            
-            // Activate selected tab
-            const activeTab = document.getElementById(section + 'Tab');
-            if (activeTab) {
-                if (section === 'teacher') {
-                    activeTab.classList.add('bg-green-500', 'text-white');
-                } else {
-                    activeTab.classList.add('bg-blue-500', 'text-white');
-                }
-                activeTab.classList.remove('text-gray-600', 'hover:bg-gray-100');
-            }
-            
-            // Load appropriate content based on user type and section
-            if (section === 'student') {
-                loadStudentSection();
-            } else if (section === 'teacher') {
-                loadTeacherSection();
-            } else if (section === 'dashboard') {
-                // Set default date to today if not set
-                if (!document.getElementById('dashboardDate').value) {
-                    document.getElementById('dashboardDate').value = currentDate;
-                }
-                showDashboardView('summary');
-            }
-        }
-
-        function loadStudentSection() {
-            if (userType === 'owner') {
-                // Show owner view
-                document.getElementById('addStudentForm').classList.remove('hidden');
-                document.getElementById('individualStudentView').classList.add('hidden');
-                document.getElementById('ownerStudentView').classList.remove('hidden');
-                loadStudentAttendance();
-            } else if (userType === 'student') {
-                // Show individual student view
-                document.getElementById('addStudentForm').classList.add('hidden');
-                document.getElementById('individualStudentView').classList.remove('hidden');
-                document.getElementById('ownerStudentView').classList.add('hidden');
-                loadMyStudentAttendance();
-            }
-        }
-
-        function loadTeacherSection() {
-            if (userType === 'owner') {
-                // Show owner view
-                document.getElementById('addTeacherForm').classList.remove('hidden');
-                document.getElementById('individualTeacherView').classList.add('hidden');
-                document.getElementById('ownerTeacherView').classList.remove('hidden');
-                loadTeacherAttendance();
-            } else if (userType === 'teacher') {
-                // Show individual teacher view
-                document.getElementById('addTeacherForm').classList.add('hidden');
-                document.getElementById('individualTeacherView').classList.remove('hidden');
-                document.getElementById('ownerTeacherView').classList.add('hidden');
-                loadMyTeacherAttendance();
-            }
-        }
-
-        function loadMyStudentAttendance() {
-            const attendance = db.getAttendanceForDate(currentDate);
-            const myStatus = attendance.students[currentUser] || 'not-marked';
-            
-            document.getElementById('currentStudentName').textContent = `${currentUser} - Your Attendance`;
-            
-            // Update button states
-            const presentBtn = document.getElementById('myPresentBtn');
-            const absentBtn = document.getElementById('myAbsentBtn');
-            const statusDiv = document.getElementById('myAttendanceStatus');
-            
-            // Reset buttons
-            presentBtn.classList.remove('bg-green-500', 'text-white', 'cursor-not-allowed', 'opacity-50');
-            presentBtn.classList.add('bg-gray-200', 'text-gray-700');
-            absentBtn.classList.remove('bg-red-500', 'text-white', 'cursor-not-allowed', 'opacity-50');
-            absentBtn.classList.add('bg-gray-200', 'text-gray-700');
-            
-            // Enable buttons by default
-            presentBtn.disabled = false;
-            absentBtn.disabled = false;
-            
-            if (myStatus === 'present') {
-                presentBtn.classList.remove('bg-gray-200', 'text-gray-700');
-                presentBtn.classList.add('bg-green-500', 'text-white');
-                statusDiv.innerHTML = '<span class="text-green-600 font-bold">✅ You are marked Present today</span><div class="text-sm text-gray-600 mt-1">Attendance locked for today</div>';
-                
-                // Disable both buttons
-                presentBtn.disabled = true;
-                absentBtn.disabled = true;
-                presentBtn.classList.add('cursor-not-allowed', 'opacity-75');
-                absentBtn.classList.add('cursor-not-allowed', 'opacity-50');
-                
-            } else if (myStatus === 'absent') {
-                absentBtn.classList.remove('bg-gray-200', 'text-gray-700');
-                absentBtn.classList.add('bg-red-500', 'text-white');
-                statusDiv.innerHTML = '<span class="text-red-600 font-bold">❌ You are marked Absent today</span><div class="text-sm text-gray-600 mt-1">Attendance locked for today</div>';
-                
-                // Disable both buttons
-                presentBtn.disabled = true;
-                absentBtn.disabled = true;
-                presentBtn.classList.add('cursor-not-allowed', 'opacity-50');
-                absentBtn.classList.add('cursor-not-allowed', 'opacity-75');
-                
-            } else {
-                statusDiv.innerHTML = '<span class="text-gray-600">Please mark your attendance</span>';
-            }
-        }
-
-        function loadMyTeacherAttendance() {
-            const attendance = db.getAttendanceForDate(currentDate);
-            const myStatus = attendance.teachers[currentUser] || 'not-marked';
-            
-            document.getElementById('currentTeacherName').textContent = `${currentUser} - Your Attendance`;
-            
-            // Update button states
-            const presentBtn = document.getElementById('myTeacherPresentBtn');
-            const absentBtn = document.getElementById('myTeacherAbsentBtn');
-            const statusDiv = document.getElementById('myTeacherAttendanceStatus');
-            
-            // Reset buttons
-            presentBtn.classList.remove('bg-green-500', 'text-white', 'cursor-not-allowed', 'opacity-50');
-            presentBtn.classList.add('bg-gray-200', 'text-gray-700');
-            absentBtn.classList.remove('bg-red-500', 'text-white', 'cursor-not-allowed', 'opacity-50');
-            absentBtn.classList.add('bg-gray-200', 'text-gray-700');
-            
-            // Enable buttons by default
-            presentBtn.disabled = false;
-            absentBtn.disabled = false;
-            
-            if (myStatus === 'present') {
-                presentBtn.classList.remove('bg-gray-200', 'text-gray-700');
-                presentBtn.classList.add('bg-green-500', 'text-white');
-                statusDiv.innerHTML = '<span class="text-green-600 font-bold">✅ You are marked Present today</span><div class="text-sm text-gray-600 mt-1">Attendance locked for today</div>';
-                
-                // Disable both buttons
-                presentBtn.disabled = true;
-                absentBtn.disabled = true;
-                presentBtn.classList.add('cursor-not-allowed', 'opacity-75');
-                absentBtn.classList.add('cursor-not-allowed', 'opacity-50');
-                
-            } else if (myStatus === 'absent') {
-                absentBtn.classList.remove('bg-gray-200', 'text-gray-700');
-                absentBtn.classList.add('bg-red-500', 'text-white');
-                statusDiv.innerHTML = '<span class="text-red-600 font-bold">❌ You are marked Absent today</span><div class="text-sm text-gray-600 mt-1">Attendance locked for today</div>';
-                
-                // Disable both buttons
-                presentBtn.disabled = true;
-                absentBtn.disabled = true;
-                presentBtn.classList.add('cursor-not-allowed', 'opacity-50');
-                absentBtn.classList.add('cursor-not-allowed', 'opacity-75');
-                
-            } else {
-                statusDiv.innerHTML = '<span class="text-gray-600">Please mark your attendance</span>';
-            }
-        }
-
-        function markMyAttendance(status) {
-            // Check if attendance is already marked for today
-            const attendance = db.getAttendanceForDate(currentDate);
-            const currentStatus = attendance.students[currentUser];
-            
-            if (currentStatus && currentStatus !== 'not-marked') {
-                // Show warning message
-                const statusDiv = document.getElementById('myAttendanceStatus');
-                statusDiv.innerHTML = `<div class="text-orange-600 font-bold">⚠️ You have already marked attendance as "${currentStatus.toUpperCase()}" for today!</div>
-                                     <div class="text-sm text-gray-600 mt-2">You can only mark attendance once per day. Contact your teacher if you need to change it.</div>`;
-                return;
-            }
-            
-            db.saveAttendance(currentDate, 'students', currentUser, status);
-            loadMyStudentAttendance();
-            updateAllCounts(); // Auto update counts
-            
-            // Show success message
-            const statusDiv = document.getElementById('myAttendanceStatus');
-            statusDiv.innerHTML += '<div class="text-sm text-green-600 mt-2">✓ Attendance marked successfully! You cannot change it today.</div>';
-            setTimeout(() => {
-                loadMyStudentAttendance();
-            }, 3000);
-        }
-
-        function markMyTeacherAttendance(status) {
-            // Check if attendance is already marked for today
-            const attendance = db.getAttendanceForDate(currentDate);
-            const currentStatus = attendance.teachers[currentUser];
-            
-            if (currentStatus && currentStatus !== 'not-marked') {
-                // Show warning message
-                const statusDiv = document.getElementById('myTeacherAttendanceStatus');
-                statusDiv.innerHTML = `<div class="text-orange-600 font-bold">⚠️ You have already marked attendance as "${currentStatus.toUpperCase()}" for today!</div>
-                                     <div class="text-sm text-gray-600 mt-2">You can only mark attendance once per day. Contact the admin if you need to change it.</div>`;
-                return;
-            }
-            
-            db.saveAttendance(currentDate, 'teachers', currentUser, status);
-            loadMyTeacherAttendance();
-            updateAllCounts(); // Auto update counts
-            
-            // Show success message
-            const statusDiv = document.getElementById('myTeacherAttendanceStatus');
-            statusDiv.innerHTML += '<div class="text-sm text-green-600 mt-2">✓ Attendance marked successfully! You cannot change it today.</div>';
-            setTimeout(() => {
-                loadMyTeacherAttendance();
-            }, 3000);
-        }
-
-        function loadStudentAttendance() {
-            const students = db.getStudents();
-            const attendance = db.getAttendanceForDate(currentDate);
-            const container = document.getElementById('studentList');
-            
-            container.innerHTML = '';
-            
-            students.forEach(student => {
-                const status = attendance.students[student] || 'not-marked';
-                const div = document.createElement('div');
-                div.className = 'flex items-center justify-between p-3 bg-gray-50 rounded-lg';
-                div.innerHTML = `
-                    <span class="font-medium text-gray-700">${student}</span>
-                    <div class="flex space-x-2">
-                        <button onclick="markAttendance('students', '${student}', 'present')" 
-                                class="px-3 py-1 rounded-md text-sm font-medium transition-all duration-200 ${status === 'present' ? 'bg-green-500 text-white' : 'bg-gray-200 text-gray-700 hover:bg-green-100'}">
-                            Present
-                        </button>
-                        <button onclick="markAttendance('students', '${student}', 'absent')" 
-                                class="px-3 py-1 rounded-md text-sm font-medium transition-all duration-200 ${status === 'absent' ? 'bg-red-500 text-white' : 'bg-gray-200 text-gray-700 hover:bg-red-100'}">
-                            Absent
-                        </button>
-                        <button onclick="removeStudent('${student}')" 
-                                class="px-2 py-1 rounded-md text-sm font-medium bg-gray-300 text-gray-700 hover:bg-red-200 transition-all duration-200" title="Remove student">
-                            ✕
-                        </button>
-                    </div>
-                `;
-                container.appendChild(div);
-            });
-            
-            updateStudentSummary();
-        }
-
-        function loadTeacherAttendance() {
-            const teachers = db.getTeachers();
-            const attendance = db.getAttendanceForDate(currentDate);
-            const container = document.getElementById('teacherList');
-            
-            container.innerHTML = '';
-            
-            teachers.forEach(teacher => {
-                const status = attendance.teachers[teacher] || 'not-marked';
-                const div = document.createElement('div');
-                div.className = 'flex items-center justify-between p-3 bg-gray-50 rounded-lg';
-                div.innerHTML = `
-                    <span class="font-medium text-gray-700">${teacher}</span>
-                    <div class="flex space-x-2">
-                        <button onclick="markAttendance('teachers', '${teacher}', 'present')" 
-                                class="px-3 py-1 rounded-md text-sm font-medium transition-all duration-200 ${status === 'present' ? 'bg-green-500 text-white' : 'bg-gray-200 text-gray-700 hover:bg-green-100'}">
-                            Present
-                        </button>
-                        <button onclick="markAttendance('teachers', '${teacher}', 'absent')" 
-                                class="px-3 py-1 rounded-md text-sm font-medium transition-all duration-200 ${status === 'absent' ? 'bg-red-500 text-white' : 'bg-gray-200 text-gray-700 hover:bg-red-100'}">
-                            Absent
-                        </button>
-                        <button onclick="removeTeacher('${teacher}')" 
-                                class="px-2 py-1 rounded-md text-sm font-medium bg-gray-300 text-gray-700 hover:bg-red-200 transition-all duration-200" title="Remove teacher">
-                            ✕
-                        </button>
-                    </div>
-                `;
-                container.appendChild(div);
-            });
-            
-            updateTeacherSummary();
-        }
-
-        function markAttendance(type, name, status) {
-            db.saveAttendance(currentDate, type, name, status);
-            
-            // Add visual feedback
-            const button = event.target;
-            button.classList.add('pulse-success');
-            setTimeout(() => button.classList.remove('pulse-success'), 600);
-            
-            // Reload the appropriate section
-            if (type === 'students') {
-                loadStudentAttendance();
-            } else {
-                loadTeacherAttendance();
-            }
-        }
-
-        function updateStudentSummary() {
-            const students = db.getStudents();
-            const attendance = db.getAttendanceForDate(currentDate);
-            
-            let present = 0, absent = 0, notMarked = 0;
-            
-            students.forEach(student => {
-                const status = attendance.students[student];
-                if (status === 'present') present++;
-                else if (status === 'absent') absent++;
-                else notMarked++;
-            });
-            
-            document.getElementById('studentPresentCount').textContent = present;
-            document.getElementById('studentAbsentCount').textContent = absent;
-            document.getElementById('studentTotalCount').textContent = students.length;
-            
-            // Update all count displays
-            updateAllCounts();
-        }
-
-        function updateTeacherSummary() {
-            const teachers = db.getTeachers();
-            const attendance = db.getAttendanceForDate(currentDate);
-            
-            let present = 0, absent = 0, notMarked = 0;
-            
-            teachers.forEach(teacher => {
-                const status = attendance.teachers[teacher];
-                if (status === 'present') present++;
-                else if (status === 'absent') absent++;
-                else notMarked++;
-            });
-            
-            document.getElementById('teacherPresentCount').textContent = present;
-            document.getElementById('teacherAbsentCount').textContent = absent;
-            document.getElementById('teacherTotalCount').textContent = teachers.length;
-            
-            // Update all count displays
-            updateAllCounts();
-        }
-
-        function updateAllCounts() {
-            const students = db.getStudents();
-            const teachers = db.getTeachers();
-            const attendance = db.getAttendanceForDate(currentDate);
-            
-            // Calculate student counts
-            let studentPresent = 0, studentAbsent = 0, studentNotMarked = 0;
-            students.forEach(student => {
-                const status = attendance.students[student];
-                if (status === 'present') studentPresent++;
-                else if (status === 'absent') studentAbsent++;
-                else studentNotMarked++;
-            });
-            
-            // Calculate teacher counts
-            let teacherPresent = 0, teacherAbsent = 0, teacherNotMarked = 0;
-            teachers.forEach(teacher => {
-                const status = attendance.teachers[teacher];
-                if (status === 'present') teacherPresent++;
-                else if (status === 'absent') teacherAbsent++;
-                else teacherNotMarked++;
-            });
-            
-            // Update header with live counts
-            updateHeaderCounts(studentPresent, studentAbsent, studentNotMarked, teacherPresent, teacherAbsent, teacherNotMarked);
-            
-            // Update dashboard if visible
-            if (!document.getElementById('dashboardSection').classList.contains('hidden')) {
-                updateDashboard();
-            }
-        }
-
-        function updateHeaderCounts(sPresent, sAbsent, sNotMarked, tPresent, tAbsent, tNotMarked) {
-            const headerElement = document.getElementById('mainHeader');
-            const existingCounts = headerElement.querySelector('.live-counts');
-            
-            if (existingCounts) {
-                existingCounts.remove();
-            }
-            
-            // Only show live counts to owner, not to students or teachers
-            if (userType !== 'owner') {
-                return;
-            }
-            
-            const countsDiv = document.createElement('div');
-            countsDiv.className = 'live-counts mt-4 bg-white rounded-lg shadow-md p-4';
-            countsDiv.innerHTML = `
-                <div class="text-center mb-2">
-                    <h3 class="text-lg font-semibold text-gray-800">📊 Today's Live Count</h3>
-                </div>
-                <div class="grid grid-cols-2 gap-4">
-                    <div class="text-center">
-                        <h4 class="text-sm font-medium text-blue-700 mb-2">👨‍🎓 Students</h4>
-                        <div class="flex justify-center space-x-4 text-sm">
-                            <div class="text-center">
-                                <div class="text-xl font-bold text-green-600">${sPresent}</div>
-                                <div class="text-xs text-green-800">Present</div>
-                            </div>
-                            <div class="text-center">
-                                <div class="text-xl font-bold text-red-600">${sAbsent}</div>
-                                <div class="text-xs text-red-800">Absent</div>
-                            </div>
-                            <div class="text-center">
-                                <div class="text-xl font-bold text-gray-600">${sNotMarked}</div>
-                                <div class="text-xs text-gray-800">Not Marked</div>
-                            </div>
-                        </div>
-                        <div class="text-xs text-blue-600 mt-1">Total: ${sPresent + sAbsent + sNotMarked}</div>
-                    </div>
-                    <div class="text-center">
-                        <h4 class="text-sm font-medium text-green-700 mb-2">👩‍🏫 Teachers</h4>
-                        <div class="flex justify-center space-x-4 text-sm">
-                            <div class="text-center">
-                                <div class="text-xl font-bold text-green-600">${tPresent}</div>
-                                <div class="text-xs text-green-800">Present</div>
-                            </div>
-                            <div class="text-center">
-                                <div class="text-xl font-bold text-red-600">${tAbsent}</div>
-                                <div class="text-xs text-red-800">Absent</div>
-                            </div>
-                            <div class="text-center">
-                                <div class="text-xl font-bold text-gray-600">${tNotMarked}</div>
-                                <div class="text-xs text-gray-800">Not Marked</div>
-                            </div>
-                        </div>
-                        <div class="text-xs text-green-600 mt-1">Total: ${tPresent + tAbsent + tNotMarked}</div>
-                    </div>
-                </div>
-                <div class="text-center mt-3 pt-3 border-t">
-                    <div class="text-sm font-medium text-gray-700">
-                        📈 Overall: <span class="text-green-600">${sPresent + tPresent} Present</span> | 
-                        <span class="text-red-600">${sAbsent + tAbsent} Absent</span> | 
-                        <span class="text-gray-600">${sNotMarked + tNotMarked} Pending</span>
-                    </div>
-                </div>
-            `;
-            
-            headerElement.appendChild(countsDiv);
-        }
-
-        function showDashboardView(view) {
-            // Hide all views
-            document.getElementById('summaryView').classList.add('hidden');
-            document.getElementById('recordsView').classList.add('hidden');
-            document.getElementById('individualView').classList.add('hidden');
-            
-            // Reset button styles
-            document.getElementById('summaryViewBtn').classList.remove('bg-blue-500', 'text-white');
-            document.getElementById('summaryViewBtn').classList.add('bg-gray-300', 'text-gray-700');
-            document.getElementById('recordsViewBtn').classList.remove('bg-blue-500', 'text-white');
-            document.getElementById('recordsViewBtn').classList.add('bg-gray-300', 'text-gray-700');
-            document.getElementById('individualViewBtn').classList.remove('bg-blue-500', 'text-white');
-            document.getElementById('individualViewBtn').classList.add('bg-gray-300', 'text-gray-700');
-            
-            // Show selected view and activate button
-            if (view === 'summary') {
-                document.getElementById('summaryView').classList.remove('hidden');
-                document.getElementById('summaryViewBtn').classList.remove('bg-gray-300', 'text-gray-700');
-                document.getElementById('summaryViewBtn').classList.add('bg-blue-500', 'text-white');
-                updateDashboard();
-            } else if (view === 'records') {
-                document.getElementById('recordsView').classList.remove('hidden');
-                document.getElementById('recordsViewBtn').classList.remove('bg-gray-300', 'text-gray-700');
-                document.getElementById('recordsViewBtn').classList.add('bg-blue-500', 'text-white');
-                initializeRecordsView();
-            } else if (view === 'individual') {
-                document.getElementById('individualView').classList.remove('hidden');
-                document.getElementById('individualViewBtn').classList.remove('bg-gray-300', 'text-gray-700');
-                document.getElementById('individualViewBtn').classList.add('bg-blue-500', 'text-white');
-                initializeIndividualView();
-            }
-        }
-
-        function initializeRecordsView() {
-            // Set default dates (last 7 days)
-            const today = new Date();
-            const weekAgo = new Date(today);
-            weekAgo.setDate(today.getDate() - 7);
-            
-            document.getElementById('recordsFromDate').value = weekAgo.toISOString().split('T')[0];
-            document.getElementById('recordsToDate').value = today.toISOString().split('T')[0];
-            
-            loadDetailedRecords();
-        }
-
-        function initializeIndividualView() {
-            // Populate person dropdown
-            const students = db.getStudents();
-            const teachers = db.getTeachers();
-            const select = document.getElementById('individualSelect');
-            
-            select.innerHTML = '<option value="">Choose a person</option>';
-            
-            students.forEach(student => {
-                const option = document.createElement('option');
-                option.value = `student:${student}`;
-                option.textContent = `👨‍🎓 ${student}`;
-                select.appendChild(option);
-            });
-            
-            teachers.forEach(teacher => {
-                const option = document.createElement('option');
-                option.value = `teacher:${teacher}`;
-                option.textContent = `👩‍🏫 ${teacher}`;
-                select.appendChild(option);
-            });
-            
-            // Set default dates (last 30 days)
-            const today = new Date();
-            const monthAgo = new Date(today);
-            monthAgo.setDate(today.getDate() - 30);
-            
-            document.getElementById('individualFromDate').value = monthAgo.toISOString().split('T')[0];
-            document.getElementById('individualToDate').value = today.toISOString().split('T')[0];
-        }
-
-        function loadDetailedRecords() {
-            const fromDate = document.getElementById('recordsFromDate').value;
-            const toDate = document.getElementById('recordsToDate').value;
-            const type = document.getElementById('recordsType').value;
-            
-            if (!fromDate || !toDate) return;
-            
-            const records = db.getAttendanceForPeriod(fromDate, toDate);
-            const container = document.getElementById('detailedRecords');
-            container.innerHTML = '';
-            
-            if (Object.keys(records).length === 0) {
-                container.innerHTML = '<p class="text-gray-500 text-center py-4">No attendance records found for this period</p>';
-                return;
-            }
-            
-            // Sort dates
-            const sortedDates = Object.keys(records).sort();
-            
-            sortedDates.forEach(date => {
-                const dayRecord = records[date];
-                const dateDiv = document.createElement('div');
-                dateDiv.className = 'mb-4 border-b pb-4';
-                
-                const formattedDate = new Date(date).toLocaleDateString('en-US', {
-                    weekday: 'long',
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric'
-                });
-                
-                let content = `<h4 class="font-semibold text-gray-800 mb-2">📅 ${formattedDate}</h4>`;
-                
-                // Students section
-                if (type === 'all' || type === 'students') {
-                    const studentEntries = Object.entries(dayRecord.students || {});
-                    if (studentEntries.length > 0) {
-                        content += '<div class="mb-2"><h5 class="font-medium text-blue-700 mb-1">👨‍🎓 Students:</h5>';
-                        content += '<div class="grid grid-cols-2 gap-2 text-sm">';
-                        studentEntries.forEach(([name, status]) => {
-                            const statusIcon = status === 'present' ? '✅' : '❌';
-                            const statusColor = status === 'present' ? 'text-green-600' : 'text-red-600';
-                            content += `<div class="flex justify-between"><span>${name}</span><span class="${statusColor}">${statusIcon} ${status}</span></div>`;
-                        });
-                        content += '</div></div>';
-                    }
-                }
-                
-                // Teachers section
-                if (type === 'all' || type === 'teachers') {
-                    const teacherEntries = Object.entries(dayRecord.teachers || {});
-                    if (teacherEntries.length > 0) {
-                        content += '<div><h5 class="font-medium text-green-700 mb-1">👩‍🏫 Teachers:</h5>';
-                        content += '<div class="grid grid-cols-2 gap-2 text-sm">';
-                        teacherEntries.forEach(([name, status]) => {
-                            const statusIcon = status === 'present' ? '✅' : '❌';
-                            const statusColor = status === 'present' ? 'text-green-600' : 'text-red-600';
-                            content += `<div class="flex justify-between"><span>${name}</span><span class="${statusColor}">${statusIcon} ${status}</span></div>`;
-                        });
-                        content += '</div></div>';
-                    }
-                }
-                
-                dateDiv.innerHTML = content;
-                container.appendChild(dateDiv);
-            });
-        }
-
-        function loadIndividualHistory() {
-            const selectedPerson = document.getElementById('individualSelect').value;
-            const fromDate = document.getElementById('individualFromDate').value;
-            const toDate = document.getElementById('individualToDate').value;
-            
-            if (!selectedPerson || !fromDate || !toDate) {
-                document.getElementById('individualStats').classList.add('hidden');
-                document.getElementById('individualHistory').innerHTML = '';
-                return;
-            }
-            
-            const [type, name] = selectedPerson.split(':');
-            const records = db.getAttendanceForPeriod(fromDate, toDate);
-            
-            let presentDays = 0;
-            let absentDays = 0;
-            let totalDays = 0;
-            const historyData = [];
-            
-            // Sort dates
-            const sortedDates = Object.keys(records).sort();
-            
-            sortedDates.forEach(date => {
-                const dayRecord = records[date];
-                const personType = type === 'student' ? 'students' : 'teachers';
-                const status = dayRecord[personType] && dayRecord[personType][name];
-                
-                if (status) {
-                    totalDays++;
-                    if (status === 'present') presentDays++;
-                    else if (status === 'absent') absentDays++;
-                    
-                    historyData.push({
-                        date: date,
-                        status: status
-                    });
-                }
-            });
-            
-            // Update stats
-            const percentage = totalDays > 0 ? Math.round((presentDays / totalDays) * 100) : 0;
-            
-            document.getElementById('individualPresent').textContent = presentDays;
-            document.getElementById('individualAbsent').textContent = absentDays;
-            document.getElementById('individualPercentage').textContent = percentage + '%';
-            document.getElementById('individualTotal').textContent = totalDays;
-            
-            // Update percentage color
-            const percentageElement = document.getElementById('individualPercentage');
-            percentageElement.className = `text-xl font-bold ${percentage >= 75 ? 'text-green-600' : percentage >= 50 ? 'text-yellow-600' : 'text-red-600'}`;
-            
-            document.getElementById('individualStats').classList.remove('hidden');
-            
-            // Update history
-            const historyContainer = document.getElementById('individualHistory');
-            historyContainer.innerHTML = '';
-            
-            if (historyData.length === 0) {
-                historyContainer.innerHTML = '<p class="text-gray-500 text-center py-4">No attendance records found for this person in the selected period</p>';
-                return;
-            }
-            
-            historyData.reverse().forEach(record => {
-                const div = document.createElement('div');
-                div.className = 'flex justify-between items-center p-2 bg-white rounded border mb-2';
-                
-                const formattedDate = new Date(record.date).toLocaleDateString('en-US', {
-                    weekday: 'short',
-                    month: 'short',
-                    day: 'numeric',
-                    year: 'numeric'
-                });
-                
-                const statusIcon = record.status === 'present' ? '✅' : '❌';
-                const statusColor = record.status === 'present' ? 'text-green-600' : 'text-red-600';
-                
-                div.innerHTML = `
-                    <span class="font-medium text-sm">${formattedDate}</span>
-                    <span class="${statusColor} font-medium">${statusIcon} ${record.status.charAt(0).toUpperCase() + record.status.slice(1)}</span>
-                `;
-                
-                historyContainer.appendChild(div);
-            });
-        }
-
-        function updateDashboard() {
-            const period = document.getElementById('periodFilter').value;
-            const selectedDate = document.getElementById('dashboardDate').value;
-            
-            let startDate, endDate;
-            
-            if (period === 'daily') {
-                startDate = endDate = selectedDate;
-            } else if (period === 'weekly') {
-                const date = new Date(selectedDate);
-                const dayOfWeek = date.getDay();
-                const startOfWeek = new Date(date);
-                startOfWeek.setDate(date.getDate() - dayOfWeek);
-                const endOfWeek = new Date(startOfWeek);
-                endOfWeek.setDate(startOfWeek.getDate() + 6);
-                
-                startDate = startOfWeek.toISOString().split('T')[0];
-                endDate = endOfWeek.toISOString().split('T')[0];
-            } else if (period === 'monthly') {
-                const date = new Date(selectedDate);
-                const startOfMonth = new Date(date.getFullYear(), date.getMonth(), 1);
-                const endOfMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0);
-                
-                startDate = startOfMonth.toISOString().split('T')[0];
-                endDate = endOfMonth.toISOString().split('T')[0];
-            }
-            
-            const periodRecords = db.getAttendanceForPeriod(startDate, endDate);
-            const students = db.getStudents();
-            const teachers = db.getTeachers();
-            
-            // Calculate totals
-            let studentPresent = 0, studentAbsent = 0;
-            let teacherPresent = 0, teacherAbsent = 0;
-            
-            Object.values(periodRecords).forEach(dayRecord => {
-                students.forEach(student => {
-                    if (dayRecord.students[student] === 'present') studentPresent++;
-                    else if (dayRecord.students[student] === 'absent') studentAbsent++;
-                });
-                
-                teachers.forEach(teacher => {
-                    if (dayRecord.teachers[teacher] === 'present') teacherPresent++;
-                    else if (dayRecord.teachers[teacher] === 'absent') teacherAbsent++;
-                });
-            });
-            
-            // Update summary cards
-            document.getElementById('dashStudentPresent').textContent = studentPresent;
-            document.getElementById('dashStudentAbsent').textContent = studentAbsent;
-            document.getElementById('dashTeacherPresent').textContent = teacherPresent;
-            document.getElementById('dashTeacherAbsent').textContent = teacherAbsent;
-            
-            // Update detailed reports
-            updateDetailedReports(periodRecords, students, teachers);
-        }
-
-        function updateDetailedReports(periodRecords, students, teachers) {
-            const studentReportContainer = document.getElementById('studentReport');
-            const teacherReportContainer = document.getElementById('teacherReport');
-            
-            // Student report
-            studentReportContainer.innerHTML = '';
-            students.forEach(student => {
-                let present = 0, absent = 0, total = 0;
-                
-                Object.values(periodRecords).forEach(dayRecord => {
-                    if (dayRecord.students[student]) {
-                        total++;
-                        if (dayRecord.students[student] === 'present') present++;
-                        else if (dayRecord.students[student] === 'absent') absent++;
-                    }
-                });
-                
-                if (total > 0) {
-                    const percentage = Math.round((present / total) * 100);
-                    const div = document.createElement('div');
-                    div.className = 'flex justify-between items-center p-2 bg-white rounded border';
-                    div.innerHTML = `
-                        <span class="font-medium text-sm">${student}</span>
-                        <div class="text-right">
-                            <div class="text-sm font-medium ${percentage >= 75 ? 'text-green-600' : percentage >= 50 ? 'text-yellow-600' : 'text-red-600'}">${percentage}%</div>
-                            <div class="text-xs text-gray-500">${present}/${total} days</div>
-                        </div>
-                    `;
-                    studentReportContainer.appendChild(div);
-                }
-            });
-            
-            // Teacher report
-            teacherReportContainer.innerHTML = '';
-            teachers.forEach(teacher => {
-                let present = 0, absent = 0, total = 0;
-                
-                Object.values(periodRecords).forEach(dayRecord => {
-                    if (dayRecord.teachers[teacher]) {
-                        total++;
-                        if (dayRecord.teachers[teacher] === 'present') present++;
-                        else if (dayRecord.teachers[teacher] === 'absent') absent++;
-                    }
-                });
-                
-                if (total > 0) {
-                    const percentage = Math.round((present / total) * 100);
-                    const div = document.createElement('div');
-                    div.className = 'flex justify-between items-center p-2 bg-white rounded border';
-                    div.innerHTML = `
-                        <span class="font-medium text-sm">${teacher}</span>
-                        <div class="text-right">
-                            <div class="text-sm font-medium ${percentage >= 75 ? 'text-green-600' : percentage >= 50 ? 'text-yellow-600' : 'text-red-600'}">${percentage}%</div>
-                            <div class="text-xs text-gray-500">${present}/${total} days</div>
-                        </div>
-                    `;
-                    teacherReportContainer.appendChild(div);
-                }
-            });
-            
-            // Show message if no data
-            if (studentReportContainer.children.length === 0) {
-                studentReportContainer.innerHTML = '<p class="text-gray-500 text-center py-4">No attendance data for this period</p>';
-            }
-            if (teacherReportContainer.children.length === 0) {
-                teacherReportContainer.innerHTML = '<p class="text-gray-500 text-center py-4">No attendance data for this period</p>';
-            }
-        }
-
-        function addStudent() {
-            const nameInput = document.getElementById('newStudentName');
-            const name = nameInput.value.trim();
-            
-            if (name) {
-                if (db.addStudent(name)) {
-                    nameInput.value = '';
-                    loadStudentAttendance();
-                    updateAllCounts(); // Auto update counts
-                    // Show success feedback
-                    nameInput.placeholder = 'Student added successfully!';
-                    setTimeout(() => {
-                        nameInput.placeholder = 'Enter student name';
-                    }, 2000);
-                } else {
-                    alert('Student already exists!');
-                }
-            } else {
-                alert('Please enter a student name');
-            }
-        }
-
-        function addTeacher() {
-            const nameInput = document.getElementById('newTeacherName');
-            const name = nameInput.value.trim();
-            
-            if (name) {
-                if (db.addTeacher(name)) {
-                    nameInput.value = '';
-                    loadTeacherAttendance();
-                    updateAllCounts(); // Auto update counts
-                    // Show success feedback
-                    nameInput.placeholder = 'Teacher added successfully!';
-                    setTimeout(() => {
-                        nameInput.placeholder = 'Enter teacher name';
-                    }, 2000);
-                } else {
-                    alert('Teacher already exists!');
-                }
-            } else {
-                alert('Please enter a teacher name');
-            }
-        }
-
-        function removeStudent(name) {
-            if (confirm(`Are you sure you want to remove ${name}?`)) {
-                db.removeStudent(name);
-                loadStudentAttendance();
-                updateAllCounts(); // Auto update counts
-            }
-        }
-
-        function removeTeacher(name) {
-            if (confirm(`Are you sure you want to remove ${name}?`)) {
-                db.removeTeacher(name);
-                loadTeacherAttendance();
-                updateAllCounts(); // Auto update counts
-            }
-        }
-
-        // Allow Enter key to add students/teachers and login
-        document.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                if (e.target.id === 'newStudentName') {
-                    addStudent();
-                } else if (e.target.id === 'newTeacherName') {
-                    addTeacher();
-                } else if (e.target.id === 'ownerPassword') {
-                    verifyOwnerPassword();
-                } else if (e.target.id === 'studentPassword') {
-                    loginAsStudent();
-                } else if (e.target.id === 'teacherPassword') {
-                    loginAsTeacher();
-                } else if (e.target.id === 'studentNameInput') {
-                    loginAsStudent();
-                } else if (e.target.id === 'teacherNameInput') {
-                    loginAsTeacher();
-                }
-            }
-        });
-
-        // Data Recovery Functions
-        function showDataRecovery() {
-            if (userType !== 'owner') return;
-            
-            // Update data status
-            const students = db.getStudents();
-            const teachers = db.getTeachers();
-            const history = db.getAttendanceHistory();
-            
-            document.getElementById('dataStatus').innerHTML = `
-                <div>👨‍🎓 Students: ${students.length}</div>
-                <div>👩‍🏫 Teachers: ${teachers.length}</div>
-                <div>📅 Attendance Days: ${Object.keys(history).length}</div>
-            `;
-            
-            // Update backup status
-            const latestBackup = localStorage.getItem('dataBackup_latest');
-            if (latestBackup) {
-                const backupData = JSON.parse(latestBackup);
-                const backupTime = new Date(backupData.backupTime).toLocaleString();
-                document.getElementById('backupStatus').innerHTML = `
-                    <div>✅ Latest Backup: ${backupTime}</div>
-                    <div>👨‍🎓 Students in Backup: ${backupData.students?.length || 0}</div>
-                    <div>👩‍🏫 Teachers in Backup: ${backupData.teachers?.length || 0}</div>
-                    <div>📅 Days in Backup: ${Object.keys(backupData.attendanceHistory || {}).length}</div>
-                `;
-            } else {
-                document.getElementById('backupStatus').innerHTML = `
-                    <div class="text-red-600">❌ No backup found</div>
-                `;
-            }
-            
-            document.getElementById('dataRecoveryModal').classList.remove('hidden');
-        }
-
-        function closeDataRecovery() {
-            document.getElementById('dataRecoveryModal').classList.add('hidden');
-        }
-
-        function restoreData() {
-            if (confirm('⚠️ Are you sure you want to restore from backup? This will replace current data.')) {
-                if (db.restoreFromBackup()) {
-                    alert('✅ Data restored successfully from backup!');
-                    location.reload(); // Refresh to show restored data
-                } else {
-                    alert('❌ No backup found to restore from!');
+                    return history;
+                } catch (error) {
+                    console.error("Error getting attendance history:", error);
+                    window.showMessageBox('Database Error', 'Failed to retrieve attendance history.', false);
+                    return {};
                 }
             }
         }
+        
+        // Expose necessary functions/variables to the global scope for the main script
+        window.initializeFirebase = initializeFirebase;
+        window.AttendanceDB = AttendanceDB;
 
-        function createManualBackup() {
-            db.createDataBackup();
-            alert('✅ Manual backup created successfully!');
-            showDataRecovery(); // Refresh the modal
-        }
-
-        // Initialize the app when page loads
-        document.addEventListener('DOMContentLoaded', initializeApp);
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9948ad69d1a53226',t:'MTc2MTQ2ODMyNS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+    
+    <!-- Main Application Logic (Unchanged from original structure, only DB calls are async) -->
+    <script>
+        // Global App State
+        let currentRole = null;
+        let db = null; // Will be assigned by initializeFirebase
+        let allStudents = [];
+        let allTeachers = [];
+        let studentUnsubscribe = null;
+        let teacherUnsubscribe = null;
+
+        // --- Custom Message Box Implementation (Replaces alert/confirm) ---
+
+        const messageBox = document.getElementById('messageBox');
+        const messageTitle = document.getElementById('messageTitle');
+        const messageBody = document.getElementById('messageBody');
+        const messageConfirm = document.getElementById('messageConfirm');
+        const messageClose = document.getElementById('messageClose');
+        
+        /**
+         * Shows a custom message box/modal.
+         * @param {string} title - The title of the modal.
+         * @param {string} message - The main content message.
+         * @param {boolean} isConfirmation - If true, shows a Confirm button and returns a Promise.
+         * @param {boolean} isSuccess - If true, styles the modal for success/info.
+         * @returns {Promise<boolean>|void}
+         */
+        window.showMessageBox = function(title, message, isConfirmation = false, isSuccess = true) {
+            messageTitle.textContent = title;
+            messageBody.textContent = message;
+            
+            // Set styles based on success/confirmation
+            if (isConfirmation) {
+                messageConfirm.classList.remove('hidden');
+                messageClose.textContent = 'Cancel';
+                messageConfirm.classList.replace('bg-red-500', 'bg-red-600');
+                messageConfirm.classList.replace('hover:bg-red-600', 'hover:bg-red-700');
+                messageClose.classList.replace('bg-blue-600', 'bg-gray-400');
+                messageClose.classList.replace('hover:bg-blue-700', 'hover:bg-gray-500');
+
+            } else {
+                messageConfirm.classList.add('hidden');
+                messageClose.textContent = 'Close';
+                messageClose.classList.replace('bg-gray-400', 'bg-blue-600');
+                messageClose.classList.replace('hover:bg-gray-500', 'hover:bg-blue-700');
+
+                if (isSuccess) {
+                    messageTitle.classList.remove('text-red-600');
+                    messageTitle.classList.add('text-gray-800');
+                } else {
+                    messageTitle.classList.remove('text-gray-800');
+                    messageTitle.classList.add('text-red-600');
+                }
+            }
+
+            messageBox.classList.remove('hidden');
+
+            if (!isConfirmation) return;
+
+            return new Promise((resolve) => {
+                const confirmHandler = () => {
+                    messageBox.classList.add('hidden');
+                    messageConfirm.removeEventListener('click', confirmHandler);
+                    messageClose.removeEventListener('click', cancelHandler);
+                    resolve(true);
+                };
+
+                const cancelHandler = () => {
+                    messageBox.classList.add('hidden');
+                    messageConfirm.removeEventListener('click', confirmHandler);
+                    messageClose.removeEventListener('click', cancelHandler);
+                    resolve(false);
+                };
+
+                messageConfirm.addEventListener('click', confirmHandler);
+                messageClose.addEventListener('click', cancelHandler);
+            });
+        };
+
+        // --- Core App Logic (Using the new async DB calls) ---
+
+        /**
+         * Runs after Firebase Authentication is complete.
+         */
+        window.initializeAppAfterAuth = function() {
+            db = window.db; // Get the initialized DB instance
+            
+            // Set today's date in the attendance date input
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('attendanceDate').value = today;
+            document.getElementById('historyStartDate').value = today;
+            document.getElementById('historyEndDate').value = today;
+
+            // Check if role is saved in session storage
+            const savedRole = sessionStorage.getItem('userRole');
+            if (savedRole) {
+                login(savedRole, true); // Silent login
+            } else {
+                document.getElementById('loginSection').classList.remove('hidden');
+            }
+        };
+
+        /**
+         * Logs the user in by setting the role and updating the UI.
+         * @param {string} role - 'owner', 'teacher', or 'student'.
+         * @param {boolean} isSilent - If true, suppresses the welcome message.
+         */
+        function login(role, isSilent = false) {
+            currentRole = role;
+            sessionStorage.setItem('userRole', role);
+
+            // Update Header Role Tag
+            const roleTag = document.getElementById('roleTag');
+            roleTag.textContent = role.toUpperCase();
+            roleTag.className = `ml-3 px-3 py-1 text-sm font-semibold rounded-full text-white ${
+                role === 'owner' ? 'bg-red-500' :
+                role === 'teacher' ? 'bg-green-500' : 'bg-yellow-500'
+            }`;
+
+            // Show Dashboard, Hide Login
+            document.getElementById('loginSection').classList.add('hidden');
+            document.getElementById('dashboardSection').classList.remove('hidden');
+
+            // Show/Hide role-specific sections
+            document.getElementById('userManagementSection').classList.toggle('hidden', role !== 'owner');
+            document.getElementById('dataRecoverySection').classList.toggle('hidden', role !== 'owner');
+
+            // Initialize real-time listeners for user data
+            if (studentUnsubscribe) studentUnsubscribe();
+            if (teacherUnsubscribe) teacherUnsubscribe();
+            
+            studentUnsubscribe = db.getStudents(updateStudentsList);
+            teacherUnsubscribe = db.getTeachers(updateTeachersList);
+
+            if (!isSilent) {
+                showMessageBox('Welcome Back!', `Logged in as a ${role}. Data is now synchronized via Firestore.`, false, true);
+            }
+        }
+
+        /**
+         * Unsubscribes from listeners and logs the user out.
+         */
+        function logout() {
+            sessionStorage.removeItem('userRole');
+            currentRole = null;
+            if (studentUnsubscribe) studentUnsubscribe();
+            if (teacherUnsubscribe) teacherUnsubscribe();
+            location.reload(); // Simple way to reset state and show login screen
+        }
+
+        // --- User Data Handling ---
+
+        /**
+         * Callback function for real-time student updates.
+         * @param {Array} students - The new list of students from Firestore.
+         */
+        function updateStudentsList(students) {
+            allStudents = students;
+            renderCurrentUsersList();
+            // If the attendance view is active, reload it
+            if (document.getElementById('userListContainer').children.length > 0) {
+                loadAttendance();
+            }
+        }
+
+        /**
+         * Callback function for real-time teacher updates.
+         * @param {Array} teachers - The new list of teachers from Firestore.
+         */
+        function updateTeachersList(teachers) {
+            allTeachers = teachers;
+            renderCurrentUsersList();
+        }
+
+        /**
+         * Renders the list of current users in the User Management section.
+         */
+        function renderCurrentUsersList() {
+            const listContainer = document.getElementById('currentUsersList');
+            const allUsers = [...allStudents, ...allTeachers];
+            
+            if (allUsers.length === 0) {
+                listContainer.innerHTML = '<p class="text-gray-500 text-center py-2">No users found. Add a student or teacher above.</p>';
+                return;
+            }
+
+            listContainer.innerHTML = allUsers.map(user => `
+                <div class="flex justify-between items-center p-2 bg-gray-50 rounded-lg">
+                    <span class="font-semibold">${user.name}</span>
+                    <span class="text-sm px-2 py-0.5 rounded-full ${user.type === 'student' ? 'bg-yellow-100 text-yellow-800' : 'bg-green-100 text-green-800'}">
+                        ${user.type.charAt(0).toUpperCase() + user.type.slice(1)}
+                    </span>
+                    ${currentRole === 'owner' ? `
+                        <button onclick="deleteUser('${user.id}')" class="text-red-500 hover:text-red-700 transition" title="Delete User">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                              <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm4 0a1 1 0 10-2 0v6a1 1 0 102 0V8z" clip-rule="evenodd" />
+                            </svg>
+                        </button>
+                    ` : ''}
+                </div>
+            `).join('');
+        }
+
+        /**
+         * Handles adding a new user (Owner only).
+         */
+        async function addUser() {
+            const nameInput = document.getElementById('newUserName');
+            const typeSelect = document.getElementById('newUserType');
+            const name = nameInput.value.trim();
+            const type = typeSelect.value;
+
+            if (!name) {
+                showMessageBox('Input Error', 'Please enter a name for the new user.', false, false);
+                return;
+            }
+
+            if (type === 'student') {
+                await db.addStudent(name);
+            } else if (type === 'teacher') {
+                await db.addTeacher(name);
+            }
+            
+            nameInput.value = ''; // Clear input
+            showMessageBox('Success', `${name} (${type}) added successfully!`, false, true);
+        }
+        
+        /**
+         * Deletes a user (Owner only).
+         * @param {string} userId - The Firestore document ID.
+         */
+        async function deleteUser(userId) {
+            const user = [...allStudents, ...allTeachers].find(u => u.id === userId);
+            const userName = user ? user.name : 'this user';
+            
+            const confirmed = await showMessageBox('Confirm Delete', 
+                `Are you sure you want to delete ${userName}? This action cannot be undone.`, 
+                true, false);
+
+            if (confirmed) {
+                await db.deleteUser(userId);
+                showMessageBox('Success', `${userName} was deleted successfully.`, false, true);
+            }
+        }
+
+        // --- Attendance Taker Logic ---
+        
+        /**
+         * Loads attendance for the selected date and renders the user list.
+         */
+        async function loadAttendance() {
+            const date = document.getElementById('attendanceDate').value;
+            if (!date) {
+                showMessageBox('Input Error', 'Please select a date first.', false, false);
+                return;
+            }
+
+            const dailyRecords = await db.getDailyAttendance(date);
+            const userListContainer = document.getElementById('userListContainer');
+            const allUsers = [...allTeachers, ...allStudents]; // Teachers first for better visibility
+
+            if (allUsers.length === 0) {
+                userListContainer.innerHTML = '<p class="text-gray-500 text-center py-4">No users to track. Please add users in the management section.</p>';
+                document.getElementById('saveButtonContainer').classList.add('hidden');
+                return;
+            }
+
+            const statuses = ['Present', 'Absent', 'Tardy', 'Sick'];
+
+            userListContainer.innerHTML = allUsers.map(user => {
+                const fieldKey = `${user.type}_${user.name.replace(/ /g, '_')}`;
+                const savedStatus = dailyRecords[fieldKey] || 'Absent'; // Default to Absent if no record
+                
+                const roleClass = user.type === 'student' ? 'bg-yellow-100 text-yellow-800' : 'bg-green-100 text-green-800';
+                
+                return `
+                    <div class="attendance-row flex flex-col sm:flex-row justify-between items-start sm:items-center p-3 my-2 bg-gray-50 rounded-lg shadow-sm"
+                         data-name="${user.name}" data-type="${user.type}">
+                        
+                        <div class="flex items-center mb-2 sm:mb-0">
+                            <span class="font-semibold text-gray-800">${user.name}</span>
+                            <span class="ml-3 text-xs font-medium px-2 py-0.5 rounded-full ${roleClass}">
+                                ${user.type.charAt(0).toUpperCase() + user.type.slice(1)}
+                            </span>
+                        </div>
+                        
+                        <div class="flex space-x-1 sm:space-x-2 flex-wrap">
+                            ${statuses.map(status => `
+                                <button onclick="setStatus(this, '${user.name}', '${user.type}', '${status}')"
+                                        class="text-xs px-3 py-1.5 font-semibold rounded-full transition duration-150 shadow-md my-0.5
+                                        ${savedStatus === status ? getStatusClasses(status, true) : getStatusClasses(status, false)}"
+                                        data-status="${status}">
+                                    ${status}
+                                </button>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            document.getElementById('saveButtonContainer').classList.remove('hidden');
+            document.getElementById('noUsersMessage').classList.add('hidden');
+        }
+
+        /**
+         * Returns the appropriate Tailwind classes for an attendance status button.
+         * @param {string} status - Attendance status.
+         * @param {boolean} isActive - Whether the status is currently selected.
+         */
+        function getStatusClasses(status, isActive) {
+            const base = 'border border-transparent';
+            switch (status) {
+                case 'Present':
+                    return isActive ? 'bg-green-600 text-white' : 'bg-green-100 text-green-700 hover:bg-green-200';
+                case 'Absent':
+                    return isActive ? 'bg-red-600 text-white' : 'bg-red-100 text-red-700 hover:bg-red-200';
+                case 'Tardy':
+                    return isActive ? 'bg-yellow-600 text-white' : 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200';
+                case 'Sick':
+                    return isActive ? 'bg-blue-600 text-white' : 'bg-blue-100 text-blue-700 hover:bg-blue-200';
+                default:
+                    return '';
+            }
+        }
+
+        /**
+         * Sets the attendance status for a single user in the UI.
+         * @param {HTMLElement} button - The button clicked.
+         * @param {string} name - User name.
+         * @param {string} type - User type.
+         * @param {string} status - Attendance status.
+         */
+        function setStatus(button, name, type, status) {
+            const row = button.closest('.attendance-row');
+            const allButtons = row.querySelectorAll('button');
+
+            allButtons.forEach(btn => {
+                const btnStatus = btn.getAttribute('data-status');
+                const isActive = btnStatus === status;
+                
+                // Remove all active classes
+                btn.className = btn.className.split(' ').filter(c => !c.includes('bg-') || c.includes('-100')).join(' ');
+                
+                // Reapply classes based on active state
+                btn.className = btn.className.split(' ').filter(c => !c.includes('text-')).join(' ');
+
+                const newClasses = getStatusClasses(btnStatus, isActive);
+                btn.className = `${btn.className.split(' ').filter(c => !c.includes('bg-') || c.includes('-100')).join(' ')} ${newClasses}`;
+            });
+            
+            // Store the status directly on the row element for easy retrieval on save
+            row.setAttribute('data-status', status);
+            
+            // Mark the button as the current status in UI (already handled by getStatusClasses logic above, but for clarity)
+            button.className = button.className.replace(/bg-\w+-100/g, getStatusClasses(status, true).match(/bg-\w+-\d{3}/)[0]);
+            button.className = button.className.replace(/text-\w+-\d{3}/g, getStatusClasses(status, true).match(/text-\w+/)[0]);
+        }
+
+
+        /**
+         * Saves the attendance for all users for the selected date.
+         */
+        async function saveDailyAttendance() {
+            const date = document.getElementById('attendanceDate').value;
+            const rows = document.querySelectorAll('.attendance-row');
+            
+            if (!rows.length) {
+                showMessageBox('Save Error', 'No users loaded to save attendance.', false, false);
+                return;
+            }
+
+            let savedCount = 0;
+            for (const row of rows) {
+                const name = row.getAttribute('data-name');
+                const type = row.getAttribute('data-type');
+                
+                // Find the currently active status from the buttons
+                const activeBtn = row.querySelector('button[class*="text-white"]'); 
+                const status = activeBtn ? activeBtn.getAttribute('data-status') : 'Absent'; // Default to Absent if somehow not set
+
+                await db.saveAttendance(date, type, name, status);
+                savedCount++;
+            }
+
+            showMessageBox('Success!', `Attendance for ${date} saved successfully for ${savedCount} users.`, false, true);
+        }
+
+        // --- History Viewer Logic ---
+
+        /**
+         * Opens the modal and fetches/displays history.
+         */
+        async function viewHistory() {
+            const startDate = document.getElementById('historyStartDate').value;
+            const endDate = document.getElementById('historyEndDate').value;
+
+            if (startDate > endDate) {
+                showMessageBox('Input Error', 'Start date cannot be after end date.', false, false);
+                return;
+            }
+            
+            const historyContent = document.getElementById('historyContent');
+            historyContent.innerHTML = '<p class="text-center text-gray-500 py-8">Loading historical records...</p>';
+            document.getElementById('historyModal').classList.remove('hidden');
+
+            const historyRecords = await db.getAttendanceForPeriod(startDate, endDate);
+            
+            const allUsers = [...allTeachers, ...allStudents].sort((a, b) => a.name.localeCompare(b.name));
+            const dates = Object.keys(historyRecords).sort();
+
+            if (dates.length === 0) {
+                historyContent.innerHTML = '<p class="text-center text-gray-500 py-8">No attendance records found for this period.</p>';
+                return;
+            }
+
+            // Generate HTML table structure
+            let tableHtml = `
+                <table class="min-w-full divide-y divide-gray-200 border border-gray-100 rounded-xl">
+                    <thead class="bg-gray-100 sticky top-0">
+                        <tr>
+                            <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-r">User Name</th>
+                            ${dates.map(d => `<th class="px-3 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">${d.substring(5)}</th>`).join('')}
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+            `;
+
+            // Populate rows
+            allUsers.forEach(user => {
+                const fieldKey = `${user.type}_${user.name.replace(/ /g, '_')}`;
+                tableHtml += `
+                    <tr>
+                        <td class="px-3 py-3 whitespace-nowrap text-sm font-medium text-gray-900 border-r">${user.name}</td>
+                        ${dates.map(date => {
+                            const record = historyRecords[date] || {};
+                            const status = record[fieldKey] || 'N/A';
+                            const statusClass = status === 'Present' ? 'bg-green-200 text-green-800' :
+                                                status === 'Absent' ? 'bg-red-200 text-red-800' :
+                                                status === 'Tardy' ? 'bg-yellow-200 text-yellow-800' :
+                                                status === 'Sick' ? 'bg-blue-200 text-blue-800' :
+                                                'bg-gray-100 text-gray-500';
+
+                            return `
+                                <td class="px-3 py-3 whitespace-nowrap text-center">
+                                    <span class="text-xs px-2 py-1 rounded-full ${statusClass}">${status.charAt(0)}</span>
+                                </td>
+                            `;
+                        }).join('')}
+                    </tr>
+                `;
+            });
+
+            tableHtml += `
+                    </tbody>
+                </table>
+            `;
+            
+            historyContent.innerHTML = tableHtml;
+        }
+
+        /**
+         * Closes the history modal.
+         */
+        function closeHistoryModal() {
+            document.getElementById('historyModal').classList.add('hidden');
+        }
+
+        // --- Initialization ---
+
+        // Start Firebase initialization process
+        document.addEventListener('DOMContentLoaded', window.initializeFirebase);
+    </script>
+</body>
 </html>
