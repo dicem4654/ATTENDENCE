@@ -1,11 +1,12 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Attendance Management System</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Attendance Management System</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
         .fade-in {
             animation: fadeIn 0.3s ease-in;
         }
@@ -20,482 +21,445 @@
             0%, 100% { transform: scale(1); }
             50% { transform: scale(1.05); }
         }
-        /* Style for dark mode date picker indicator */
-        input[type="date"]::-webkit-calendar-picker-indicator {
-            filter: invert(0);
-        }
-        .dark input[type="date"]::-webkit-calendar-picker-indicator {
-            filter: invert(1);
-        }
     </style>
-</head>
-<body class="bg-gradient-to-br from-blue-50 to-indigo-100 dark:bg-gradient-to-br dark:from-gray-900 dark:to-gray-900 min-h-screen">
-    
-    <div class="fixed top-4 right-4 z-50">
-        <button onclick="toggleDarkMode()" id="darkModeToggle" class="px-3 py-2 bg-white dark:bg-gray-800 rounded-full shadow-lg text-xl border dark:border-gray-700">
-            <span id="theme-icon-sun" class="hidden">☀️</span>
-            <span id="theme-icon-moon" class="">🌙</span>
-        </button>
-    </div>
-
-    <div class="container mx-auto px-4 py-8">
-        <div id="loginSection" class="max-w-md mx-auto">
-            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8">
-                <div class="text-center mb-8">
-                    <h1 class="text-4xl font-bold text-gray-800 dark:text-gray-100 mb-2">📚 DICE-M ATTENDANCE</h1>
-                    <p class="text-gray-600 dark:text-gray-300">Please select your login type</p>
-                </div>
-                
-                <div class="space-y-4">
-                    <button onclick="showOwnerLogin()" class="w-full px-6 py-3 bg-purple-500 text-white rounded-lg font-medium hover:bg-purple-600 transition-colors">
+<style>
+  html.dark {
+    color-scheme: dark;
+  }
+  /* New neutral dark theme with colored accents */
+  body.dark,
+  html.dark body {
+    background: #111827 !important; /* gray-900 */
+    color: #d1d5db !important; /* gray-300 */
+  }
+  .dark .bg-white { background-color: #1f2937 !important; } /* gray-800 */
+  .dark .text-gray-800 { color: #f3f4f6 !important; } /* gray-100 */
+  .dark .text-gray-700 { color: #9ca3af !important; } /* gray-400 */
+  .dark .bg-gray-50 { background-color: #374151 !important; } /* gray-700 */
+  
+  /* Accent colors */
+  .dark .bg-blue-50 { background-color: #172554 !important; } /* blue-950 */
+  .dark .bg-green-50 { background-color: #052e16 !important; } /* green-950 */
+  .dark .bg-red-50 { background-color: #450a0a !important; } /* red-950 */
+  .dark .bg-orange-50 { background-color: #4a2504 !important; } /* orange-950 */
+  
+  .dark .shadow-lg, .dark .shadow-md { box-shadow: 0 2px 12px #00000090!important; }
+</style></head>
+<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen">
+<div class="container mx-auto px-4 py-8"><div class="flex items-center space-x-2 justify-end" id="theme-toggle-container"><select class="px-2 py-1 rounded border text-sm" id="themeSelector"><option value="light">Light</option><option value="dark">Dark</option></select></div>
+<div class="max-w-md mx-auto" id="loginSection">
+<div class="bg-white rounded-xl shadow-lg p-8">
+<div class="text-center mb-8">
+<h1 class="text-4xl font-bold text-gray-800 mb-2">📚 DICE-M ATTENDANCE</h1>
+<p class="text-gray-600">Please select your login type</p>
+</div>
+<div class="space-y-4">
+<button class="w-full px-6 py-3 bg-purple-500 text-white rounded-lg font-medium hover:bg-purple-600 transition-colors" onclick="showOwnerLogin()">
                         👑 Owner Login
                     </button>
-                    <button onclick="showStudentLogin()" class="w-full px-6 py-3 bg-blue-500 text-white rounded-lg font-medium hover:bg-blue-600 transition-colors">
+<button class="w-full px-6 py-3 bg-blue-500 text-white rounded-lg font-medium hover:bg-blue-600 transition-colors" onclick="showStudentLogin()">
                         👨‍🎓 Student Login
                     </button>
-                    <button onclick="showTeacherLogin()" class="w-full px-6 py-3 bg-green-500 text-white rounded-lg font-medium hover:bg-green-600 transition-colors">
+<button class="w-full px-6 py-3 bg-green-500 text-white rounded-lg font-medium hover:bg-green-600 transition-colors" onclick="showTeacherLogin()">
                         👩‍🏫 Teacher Login
                     </button>
-                </div>
-            </div>
-        </div>
-
-        <div id="ownerPasswordSection" class="max-w-md mx-auto hidden">
-            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8">
-                <div class="text-center mb-6">
-                    <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-2">👑 Owner Login</h2>
-                    <p class="text-gray-600 dark:text-gray-300">Enter owner password</p>
-                </div>
-                
-                <div class="space-y-4">
-                    <input type="password" id="ownerPassword" placeholder="Enter password" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400">
-                    <button onclick="verifyOwnerPassword()" class="w-full px-6 py-3 bg-purple-500 text-white rounded-lg font-medium hover:bg-purple-600 transition-colors">
+</div>
+</div>
+</div>
+<div class="max-w-md mx-auto hidden" id="ownerPasswordSection">
+<div class="bg-white rounded-xl shadow-lg p-8">
+<div class="text-center mb-6">
+<h2 class="text-2xl font-bold text-gray-800 mb-2">👑 Owner Login</h2>
+<p class="text-gray-600">Enter owner password</p>
+</div>
+<div class="space-y-4">
+<input class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-purple-500 focus:border-purple-500" id="ownerPassword" placeholder="Enter password" type="password"/>
+<button class="w-full px-6 py-3 bg-purple-500 text-white rounded-lg font-medium hover:bg-purple-600 transition-colors" onclick="verifyOwnerPassword()">
                         Login as Owner
                     </button>
-                    <button onclick="backToLogin()" class="w-full px-6 py-3 bg-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-400 transition-colors dark:bg-gray-600 dark:text-gray-100 dark:hover:bg-gray-500">
+<button class="w-full px-6 py-3 bg-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-400 transition-colors" onclick="backToLogin()">
                         Back
                     </button>
-                </div>
-                <p class="text-xs text-gray-500 dark:text-gray-400 mt-4 text-center">🔐 Strong password required for security</p>
-            </div>
-        </div>
-
-        <div id="studentNameSection" class="max-w-md mx-auto hidden">
-            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8">
-                <div class="text-center mb-6">
-                    <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-2">👨‍🎓 Student Login</h2>
-                    <p class="text-gray-600 dark:text-gray-300">Select your name and enter password</p>
-                </div>
-                
-                <div class="space-y-4">
-                    <div class="flex space-x-2">
-                        <button onclick="toggleStudentInputMode('select')" id="studentSelectModeBtn" class="px-3 py-2 bg-blue-500 text-white rounded-md text-sm font-medium">
+</div>
+<p class="text-xs text-gray-500 mt-4 text-center">🔐 Strong password required for security</p>
+</div>
+</div>
+<div class="max-w-md mx-auto hidden" id="studentNameSection">
+<div class="bg-white rounded-xl shadow-lg p-8">
+<div class="text-center mb-6">
+<h2 class="text-2xl font-bold text-gray-800 mb-2">👨‍🎓 Student Login</h2>
+<p class="text-gray-600">Select your name and enter password</p>
+</div>
+<div class="space-y-4">
+<div class="flex space-x-2">
+<button class="px-3 py-2 bg-blue-500 text-white rounded-md text-sm font-medium" id="studentSelectModeBtn" onclick="toggleStudentInputMode('select')">
                             Select Name
                         </button>
-                        <button onclick="toggleStudentInputMode('type')" id="studentTypeModeBtn" class="px-3 py-2 bg-gray-300 text-gray-700 rounded-md text-sm font-medium dark:bg-gray-600 dark:text-gray-100">
+<button class="px-3 py-2 bg-gray-300 text-gray-700 rounded-md text-sm font-medium" id="studentTypeModeBtn" onclick="toggleStudentInputMode('type')">
                             Type Name
                         </button>
-                    </div>
-                    
-                    <select id="studentNameSelect" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-                        <option value="">Select your name</option>
-                    </select>
-                    
-                    <input type="text" id="studentNameInput" placeholder="Type your name" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 hidden dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400">
-                    
-                    <input type="password" id="studentPassword" placeholder="Enter your password" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400">
-                    <button onclick="loginAsStudent()" class="w-full px-6 py-3 bg-blue-500 text-white rounded-lg font-medium hover:bg-blue-600 transition-colors">
+</div>
+<select class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" id="studentNameSelect">
+<option value="">Select your name</option>
+</select>
+<input class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 hidden" id="studentNameInput" placeholder="Type your name" type="text"/>
+<input class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" id="studentPassword" placeholder="Enter your password" type="password"/>
+<button class="w-full px-6 py-3 bg-blue-500 text-white rounded-lg font-medium hover:bg-blue-600 transition-colors" onclick="loginAsStudent()">
                         Login as Student
                     </button>
-                    <button onclick="backToLogin()" class="w-full px-6 py-3 bg-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-400 transition-colors dark:bg-gray-600 dark:text-gray-100 dark:hover:bg-gray-500">
+<button class="w-full px-6 py-3 bg-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-400 transition-colors" onclick="backToLogin()">
                         Back
                     </button>
-                </div>
-                <p class="text-xs text-gray-500 dark:text-gray-400 mt-4 text-center">Default password for all students: student123</p>
-            </div>
-        </div>
-
-        <div id="teacherNameSection" class="max-w-md mx-auto hidden">
-            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8">
-                <div class="text-center mb-6">
-                    <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-2">👩‍🏫 Teacher Login</h2>
-                    <p class="text-gray-600 dark:text-gray-300">Select your name and enter password</p>
-                </div>
-                
-                <div class="space-y-4">
-                    <div class="flex space-x-2">
-                        <button onclick="toggleTeacherInputMode('select')" id="selectModeBtn" class="px-3 py-2 bg-green-500 text-white rounded-md text-sm font-medium">
+</div>
+<p class="text-xs text-gray-500 mt-4 text-center">Default password for all students: student123</p>
+</div>
+</div>
+<div class="max-w-md mx-auto hidden" id="teacherNameSection">
+<div class="bg-white rounded-xl shadow-lg p-8">
+<div class="text-center mb-6">
+<h2 class="text-2xl font-bold text-gray-800 mb-2">👩‍🏫 Teacher Login</h2>
+<p class="text-gray-600">Select your name and enter password</p>
+</div>
+<div class="space-y-4">
+<div class="flex space-x-2">
+<button class="px-3 py-2 bg-green-500 text-white rounded-md text-sm font-medium" id="selectModeBtn" onclick="toggleTeacherInputMode('select')">
                             Select Name
                         </button>
-                        <button onclick="toggleTeacherInputMode('type')" id="typeModeBtn" class="px-3 py-2 bg-gray-300 text-gray-700 rounded-md text-sm font-medium dark:bg-gray-600 dark:text-gray-100">
+<button class="px-3 py-2 bg-gray-300 text-gray-700 rounded-md text-sm font-medium" id="typeModeBtn" onclick="toggleTeacherInputMode('type')">
                             Type Name
                         </button>
-                    </div>
-                    
-                    <select id="teacherNameSelect" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-                        <option value="">Select your name</option>
-                    </select>
-                    
-                    <input type="text" id="teacherNameInput" placeholder="Type your name" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-green-500 focus:border-green-500 hidden dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400">
-                    
-                    <input type="password" id="teacherPassword" placeholder="Enter your password" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400">
-                    <button onclick="loginAsTeacher()" class="w-full px-6 py-3 bg-green-500 text-white rounded-lg font-medium hover:bg-green-600 transition-colors">
+</div>
+<select class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-green-500 focus:border-green-500" id="teacherNameSelect">
+<option value="">Select your name</option>
+</select>
+<input class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-green-500 focus:border-green-500 hidden" id="teacherNameInput" placeholder="Type your name" type="text"/>
+<input class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-green-500 focus:border-green-500" id="teacherPassword" placeholder="Enter your password" type="password"/>
+<button class="w-full px-6 py-3 bg-green-500 text-white rounded-lg font-medium hover:bg-green-600 transition-colors" onclick="loginAsTeacher()">
                         Login as Teacher
                     </button>
-                    <button onclick="backToLogin()" class="w-full px-6 py-3 bg-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-400 transition-colors dark:bg-gray-600 dark:text-gray-100 dark:hover:bg-gray-500">
+<button class="w-full px-6 py-3 bg-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-400 transition-colors" onclick="backToLogin()">
                         Back
                     </button>
-                </div>
-                <p class="text-xs text-gray-500 dark:text-gray-400 mt-4 text-center">Default password for all teachers: teacher123</p>
-            </div>
-        </div>
-
-        <div id="mainHeader" class="text-center mb-8 hidden">
-            <h1 class="text-4xl font-bold text-gray-800 dark:text-gray-100 mb-2">📚 DICE-M ATTENDANCE</h1>
-            <div class="flex justify-center items-center space-x-4 mb-4">
-                <p class="text-gray-600 dark:text-gray-300" id="welcomeMessage">Welcome</p>
-                <button onclick="logout()" class="px-4 py-2 bg-red-500 text-white rounded-lg text-sm hover:bg-red-600 transition-colors">
+</div>
+<p class="text-xs text-gray-500 mt-4 text-center">Default password for all teachers: teacher123</p>
+</div>
+</div>
+<div class="text-center mb-8 hidden" id="mainHeader">
+<h1 class="text-4xl font-bold text-gray-800 mb-2">📚 DICE-M ATTENDANCE</h1>
+<div class="flex justify-center items-center space-x-4 mb-4">
+<p class="text-gray-600" id="welcomeMessage">Welcome</p>
+<button class="px-4 py-2 bg-red-500 text-white rounded-lg text-sm hover:bg-red-600 transition-colors" onclick="logout()">
                     Logout
                 </button>
-            </div>
-            
-            <div id="dateNavigation" class="flex flex-wrap justify-center items-center gap-4 mb-4 hidden">
-                <button onclick="changeDate(-1)" class="px-3 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors">
+</div>
+<div class="flex flex-col md:flex-row justify-center items-center gap-4 mb-4 hidden" id="dateNavigation">
+<button class="w-full md:w-auto px-3 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors" onclick="changeDate(-1)">
                     ← Previous Day
                 </button>
-                <div class="flex items-center space-x-2">
-                    <label class="text-sm font-medium text-gray-700 dark:text-gray-200">View Date:</label>
-                    <input type="date" id="currentDatePicker" onchange="setCurrentDate(this.value)" class="border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" style="color-scheme: dark;">
-                </div>
-                <button onclick="changeDate(1)" class="px-3 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors">
+<div class="flex items-center justify-center w-full md:w-auto space-x-2">
+<label class="text-sm font-medium text-gray-700">View Date:</label>
+<input class="border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" id="currentDatePicker" onchange="setCurrentDate(this.value)" type="date"/>
+</div>
+<button class="w-full md:w-auto px-3 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors" onclick="changeDate(1)">
                     Next Day →
                 </button>
-                <button onclick="goToToday()" class="px-3 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors">
+<button class="w-full md:w-auto px-3 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors" onclick="goToToday()">
                     📅 Today
                 </button>
-                <button onclick="showDataRecovery()" class="px-3 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors">
+<button class="w-full md:w-auto px-3 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors" onclick="showDataRecovery()">
                     🔄 Data Recovery
                 </button>
-            </div>
-            
-
-        </div>
-
-        <div id="dataRecoveryModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
-            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-xl p-6 max-w-md w-full mx-4">
-                <div class="text-center mb-6">
-                    <h3 class="text-xl font-bold text-gray-800 dark:text-gray-100 mb-2">🔄 Data Recovery Center</h3>
-                    <p class="text-gray-600 dark:text-gray-300">Restore lost attendance data from backups</p>
-                </div>
-                
-                <div class="space-y-4">
-                    <div class="bg-blue-50 dark:bg-gray-700 rounded-lg p-4">
-                        <h4 class="font-semibold text-blue-800 dark:text-blue-300 mb-2">📊 Current Data Status</h4>
-                        <div class="text-sm text-blue-700 dark:text-blue-300" id="dataStatus">
-                            </div>
-                    </div>
-                    
-                    <div class="bg-orange-50 dark:bg-gray-700 rounded-lg p-4">
-                        <h4 class="font-semibold text-orange-800 dark:text-orange-300 mb-2">🔄 Available Backups</h4>
-                        <div class="text-sm text-orange-700 dark:text-orange-300" id="backupStatus">
-                            </div>
-                    </div>
-                    
-                    <div class="flex flex-col sm:flex-row gap-3">
-                        <button onclick="restoreData()" class="w-full sm:flex-1 px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors">
+</div>
+</div>
+<div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden" id="dataRecoveryModal">
+<div class="bg-white rounded-xl shadow-xl p-6 max-w-md w-full mx-4">
+<div class="text-center mb-6">
+<h3 class="text-xl font-bold text-gray-800 mb-2">🔄 Data Recovery Center</h3>
+<p class="text-gray-600">Restore lost attendance data from backups</p>
+</div>
+<div class="space-y-4">
+<div class="bg-blue-50 rounded-lg p-4">
+<h4 class="font-semibold text-blue-800 mb-2">📊 Current Data Status</h4>
+<div class="text-sm text-blue-700" id="dataStatus">
+</div>
+</div>
+<div class="bg-orange-50 rounded-lg p-4">
+<h4 class="font-semibold text-orange-800 mb-2">🔄 Available Backups</h4>
+<div class="text-sm text-orange-700" id="backupStatus">
+</div>
+</div>
+<div class="flex space-x-3">
+<button class="flex-1 px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors" onclick="restoreData()">
                             ✅ Restore Latest Backup
                         </button>
-                        <button onclick="createManualBackup()" class="w-full sm:flex-1 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors">
+<button class="flex-1 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors" onclick="createManualBackup()">
                             💾 Create Backup Now
                         </button>
-                    </div>
-                    
-                    <button onclick="closeDataRecovery()" class="w-full px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition-colors dark:bg-gray-600 dark:text-gray-100 dark:hover:bg-gray-500">
+</div>
+<button class="w-full px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition-colors" onclick="closeDataRecovery()">
                         Close
                     </button>
-                </div>
-            </div>
-        </div>
-
-        <div id="mainNavigation" class="flex justify-center mb-8 hidden">
-            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-2 flex flex-wrap justify-center gap-2" id="navigationTabs">
-                </div>
-        </div>
-
-        <div id="studentSection" class="section">
-            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 mb-6">
-                <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-4 flex items-center">
+</div>
+</div>
+</div>
+<div class="flex justify-center mb-8 hidden" id="mainNavigation">
+<div class="bg-white rounded-lg shadow-md p-2 flex flex-wrap justify-center gap-2" id="navigationTabs">
+</div>
+</div>
+<div class="section" id="studentSection">
+<div class="bg-white rounded-xl shadow-lg p-6 mb-6">
+<h2 class="text-2xl font-bold text-gray-800 mb-4 flex items-center">
                     👨‍🎓 Student Attendance
-                    <span class="ml-4 text-sm bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 px-3 py-1 rounded-full" id="studentDate"></span>
-                </h2>
-                
-                <div id="addStudentForm" class="mb-6 p-4 bg-blue-50 dark:bg-gray-700 rounded-lg hidden">
-                    <h3 class="text-lg font-semibold mb-3 text-gray-700 dark:text-gray-200">Add New Student</h3>
-                    <div class="flex flex-col sm:flex-row gap-3">
-                        <input type="text" id="newStudentName" placeholder="Enter student name" class="w-full sm:flex-1 border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400">
-                        <button onclick="addStudent()" class="w-full sm:w-auto px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors">Add Student</button>
-                    </div>
-                </div>
-
-                <div id="individualStudentView" class="hidden">
-                    <div class="text-center p-8">
-                        <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-6 max-w-md mx-auto">
-                            <h3 class="text-xl font-semibold mb-4 text-gray-700 dark:text-gray-200" id="currentStudentName">Your Attendance</h3>
-                            <div class="space-y-4">
-                                <div class="text-lg text-gray-600 dark:text-gray-300 mb-4">Mark your attendance for today:</div>
-                                <div class="flex justify-center space-x-4">
-                                    <button onclick="markMyAttendance('present')" id="myPresentBtn" class="px-6 py-3 rounded-lg font-medium transition-all duration-200 bg-gray-200 text-gray-700 dark:bg-gray-600 dark:text-gray-200 hover:bg-green-100 dark:hover:bg-green-700">
+                    <span class="ml-4 text-sm bg-blue-100 text-blue-800 px-3 py-1 rounded-full" id="studentDate"></span>
+</h2>
+<div class="mb-6 p-4 bg-blue-50 rounded-lg hidden" id="addStudentForm">
+<h3 class="text-lg font-semibold mb-3 text-gray-700">Add New Student</h3>
+<div class="flex flex-col sm:flex-row gap-3">
+<input class="flex-1 border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" id="newStudentName" placeholder="Enter student name" type="text"/>
+<button class="w-full sm:w-auto px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors" onclick="addStudent()">Add Student</button>
+</div>
+</div>
+<div class="hidden" id="individualStudentView">
+<div class="text-center p-8">
+<div class="bg-gray-50 rounded-lg p-6 max-w-md mx-auto">
+<h3 class="text-xl font-semibold mb-4 text-gray-700" id="currentStudentName">Your Attendance</h3>
+<div class="space-y-4">
+<div class="text-lg text-gray-600 mb-4">Mark your attendance for today:</div>
+<div class="flex justify-center space-x-4">
+<button class="px-6 py-3 rounded-lg font-medium transition-all duration-200 bg-gray-200 text-gray-700 hover:bg-green-100" id="myPresentBtn" onclick="markMyAttendance('present')">
                                         ✅ Present
                                     </button>
-                                    <button onclick="markMyAttendance('absent')" id="myAbsentBtn" class="px-6 py-3 rounded-lg font-medium transition-all duration-200 bg-gray-200 text-gray-700 dark:bg-gray-600 dark:text-gray-200 hover:bg-red-100 dark:hover:bg-red-700">
+<button class="px-6 py-3 rounded-lg font-medium transition-all duration-200 bg-gray-200 text-gray-700 hover:bg-red-100" id="myAbsentBtn" onclick="markMyAttendance('absent')">
                                         ❌ Absent
                                     </button>
-                                </div>
-                                <div id="myAttendanceStatus" class="mt-4 text-lg font-medium dark:text-gray-300"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div id="ownerStudentView" class="hidden">
-                    <div class="grid md:grid-cols-2 gap-6">
-                        <div>
-                            <h3 class="text-lg font-semibold mb-3 text-gray-700 dark:text-gray-200">Mark Attendance</h3>
-                            <div id="studentList" class="space-y-3 max-h-96 overflow-y-auto">
-                                </div>
-                        </div>
-                        
-                        <div>
-                            <h3 class="text-lg font-semibold mb-3 text-gray-700 dark:text-gray-200">Today's Summary</h3>
-                            <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 space-y-3">
-                                <div class="flex justify-between items-center">
-                                    <span class="text-green-600 dark:text-green-400 font-medium">✅ Present:</span>
-                                    <span id="studentPresentCount" class="text-2xl font-bold text-green-600 dark:text-green-400">0</span>
-                                </div>
-                                <div class="flex justify-between items-center">
-                                    <span class="text-red-600 dark:text-red-400 font-medium">❌ Absent:</span>
-                                    <span id="studentAbsentCount" class="text-2xl font-bold text-red-600 dark:text-red-400">0</span>
-                                </div>
-                                <div class="flex justify-between items-center border-t border-gray-200 dark:border-gray-600 pt-3">
-                                    <span class="text-gray-700 dark:text-gray-200 font-medium">Total Students:</span>
-                                    <span id="studentTotalCount" class="text-2xl font-bold text-gray-700 dark:text-gray-200">0</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div id="teacherSection" class="section hidden">
-            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 mb-6">
-                <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-4 flex items-center">
+</div>
+<div class="mt-4 text-lg font-medium" id="myAttendanceStatus"></div>
+</div>
+</div>
+</div>
+</div>
+<div class="hidden" id="ownerStudentView">
+<div class="grid md:grid-cols-2 gap-6">
+<div>
+<h3 class="text-lg font-semibold mb-3 text-gray-700">Mark Attendance</h3>
+<div class="space-y-3 max-h-96 overflow-y-auto" id="studentList">
+</div>
+</div>
+<div>
+<h3 class="text-lg font-semibold mb-3 text-gray-700">Today's Summary</h3>
+<div class="bg-gray-50 rounded-lg p-4 space-y-3">
+<div class="flex justify-between items-center">
+<span class="text-green-600 font-medium">✅ Present:</span>
+<span class="text-2xl font-bold text-green-600" id="studentPresentCount">0</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="text-red-600 font-medium">❌ Absent:</span>
+<span class="text-2xl font-bold text-red-600" id="studentAbsentCount">0</span>
+</div>
+<div class="flex justify-between items-center border-t pt-3">
+<span class="text-gray-700 font-medium">Total Students:</span>
+<span class="text-2xl font-bold text-gray-700" id="studentTotalCount">0</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="section hidden" id="teacherSection">
+<div class="bg-white rounded-xl shadow-lg p-6 mb-6">
+<h2 class="text-2xl font-bold text-gray-800 mb-4 flex items-center">
                     👩‍🏫 Teacher Attendance
-                    <span class="ml-4 text-sm bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 px-3 py-1 rounded-full" id="teacherDate"></span>
-                </h2>
-                
-                <div id="addTeacherForm" class="mb-6 p-4 bg-green-50 dark:bg-gray-700 rounded-lg hidden">
-                    <h3 class="text-lg font-semibold mb-3 text-gray-700 dark:text-gray-200">Add New Teacher</h3>
-                    <div class="flex flex-col sm:flex-row gap-3">
-                        <input type="text" id="newTeacherName" placeholder="Enter teacher name" class="w-full sm:flex-1 border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400">
-                        <button onclick="addTeacher()" class="w-full sm:w-auto px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition-colors">Add Teacher</button>
-                    </div>
-                </div>
-
-                <div id="individualTeacherView" class="hidden">
-                    <div class="text-center p-8">
-                        <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-6 max-w-md mx-auto">
-                            <h3 class="text-xl font-semibold mb-4 text-gray-700 dark:text-gray-200" id="currentTeacherName">Your Attendance</h3>
-                            <div class="space-y-4">
-                                <div class="text-lg text-gray-600 dark:text-gray-300 mb-4">Mark your attendance for today:</div>
-                                <div class="flex justify-center space-x-4">
-                                    <button onclick="markMyTeacherAttendance('present')" id="myTeacherPresentBtn" class="px-6 py-3 rounded-lg font-medium transition-all duration-200 bg-gray-200 text-gray-700 dark:bg-gray-600 dark:text-gray-200 hover:bg-green-100 dark:hover:bg-green-700">
+                    <span class="ml-4 text-sm bg-green-100 text-green-800 px-3 py-1 rounded-full" id="teacherDate"></span>
+</h2>
+<div class="mb-6 p-4 bg-green-50 rounded-lg hidden" id="addTeacherForm">
+<h3 class="text-lg font-semibold mb-3 text-gray-700">Add New Teacher</h3>
+<div class="flex flex-col sm:flex-row gap-3">
+<input class="flex-1 border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-green-500 focus:border-green-500" id="newTeacherName" placeholder="Enter teacher name" type="text"/>
+<button class="w-full sm:w-auto px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition-colors" onclick="addTeacher()">Add Teacher</button>
+</div>
+</div>
+<div class="hidden" id="individualTeacherView">
+<div class="text-center p-8">
+<div class="bg-gray-50 rounded-lg p-6 max-w-md mx-auto">
+<h3 class="text-xl font-semibold mb-4 text-gray-700" id="currentTeacherName">Your Attendance</h3>
+<div class="space-y-4">
+<div class="text-lg text-gray-600 mb-4">Mark your attendance for today:</div>
+<div class="flex justify-center space-x-4">
+<button class="px-6 py-3 rounded-lg font-medium transition-all duration-200 bg-gray-200 text-gray-700 hover:bg-green-100" id="myTeacherPresentBtn" onclick="markMyTeacherAttendance('present')">
                                         ✅ Present
                                     </button>
-                                    <button onclick="markMyTeacherAttendance('absent')" id="myTeacherAbsentBtn" class="px-6 py-3 rounded-lg font-medium transition-all duration-200 bg-gray-200 text-gray-700 dark:bg-gray-600 dark:text-gray-200 hover:bg-red-100 dark:hover:bg-red-700">
+<button class="px-6 py-3 rounded-lg font-medium transition-all duration-200 bg-gray-200 text-gray-700 hover:bg-red-100" id="myTeacherAbsentBtn" onclick="markMyTeacherAttendance('absent')">
                                         ❌ Absent
                                     </button>
-                                </div>
-                                <div id="myTeacherAttendanceStatus" class="mt-4 text-lg font-medium dark:text-gray-300"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div id="ownerTeacherView" class="hidden">
-                    <div class="grid md:grid-cols-2 gap-6">
-                        <div>
-                            <h3 class="text-lg font-semibold mb-3 text-gray-700 dark:text-gray-200">Mark Attendance</h3>
-                            <div id="teacherList" class="space-y-3 max-h-96 overflow-y-auto">
-                                </div>
-                        </div>
-                        
-                        <div>
-                            <h3 class="text-lg font-semibold mb-3 text-gray-700 dark:text-gray-200">Today's Summary</h3>
-                            <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 space-y-3">
-                                <div class="flex justify-between items-center">
-                                    <span class="text-green-600 dark:text-green-400 font-medium">✅ Present:</span>
-                                    <span id="teacherPresentCount" class="text-2xl font-bold text-green-600 dark:text-green-400">0</span>
-                                </div>
-                                <div class="flex justify-between items-center">
-                                    <span class="text-red-600 dark:text-red-400 font-medium">❌ Absent:</span>
-                                    <span id="teacherAbsentCount" class="text-2xl font-bold text-red-600 dark:text-red-400">0</span>
-                                </div>
-                                <div class="flex justify-between items-center border-t border-gray-200 dark:border-gray-600 pt-3">
-                                    <span class="text-gray-700 dark:text-gray-200 font-medium">Total Teachers:</span>
-                                    <span id="teacherTotalCount" class="text-2xl font-bold text-gray-700 dark:text-gray-200">0</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div id="dashboardSection" class="section hidden">
-            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 mb-6">
-                <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-4 flex items-center">
+</div>
+<div class="mt-4 text-lg font-medium" id="myTeacherAttendanceStatus"></div>
+</div>
+</div>
+</div>
+</div>
+<div class="hidden" id="ownerTeacherView">
+<div class="grid md:grid-cols-2 gap-6">
+<div>
+<h3 class="text-lg font-semibold mb-3 text-gray-700">Mark Attendance</h3>
+<div class="space-y-3 max-h-96 overflow-y-auto" id="teacherList">
+</div>
+</div>
+<div>
+<h3 class="text-lg font-semibold mb-3 text-gray-700">Today's Summary</h3>
+<div class="bg-gray-50 rounded-lg p-4 space-y-3">
+<div class="flex justify-between items-center">
+<span class="text-green-600 font-medium">✅ Present:</span>
+<span class="text-2xl font-bold text-green-600" id="teacherPresentCount">0</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="text-red-600 font-medium">❌ Absent:</span>
+<span class="text-2xl font-bold text-red-600" id="teacherAbsentCount">0</span>
+</div>
+<div class="flex justify-between items-center border-t pt-3">
+<span class="text-gray-700 font-medium">Total Teachers:</span>
+<span class="text-2xl font-bold text-gray-700" id="teacherTotalCount">0</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="section hidden" id="dashboardSection">
+<div class="bg-white rounded-xl shadow-lg p-6 mb-6">
+<h2 class="text-2xl font-bold text-gray-800 mb-4 flex items-center">
                     📊 Attendance Dashboard
                 </h2>
-                
-                <div class="flex flex-wrap gap-2 mb-6">
-                    <button onclick="showDashboardView('summary')" id="summaryViewBtn" class="px-4 py-2 bg-blue-500 text-white rounded-md font-medium">
+<div class="flex space-x-2 mb-6">
+<button class="px-4 py-2 bg-blue-500 text-white rounded-md font-medium" id="summaryViewBtn" onclick="showDashboardView('summary')">
                         📊 Summary
                     </button>
-                    <button onclick="showDashboardView('records')" id="recordsViewBtn" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md font-medium dark:bg-gray-600 dark:text-gray-100">
+<button class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md font-medium" id="recordsViewBtn" onclick="showDashboardView('records')">
                         📋 Detailed Records
                     </button>
-                    <button onclick="showDashboardView('individual')" id="individualViewBtn" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md font-medium dark:bg-gray-600 dark:text-gray-100">
+<button class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md font-medium" id="individualViewBtn" onclick="showDashboardView('individual')">
                         👤 Individual History
                     </button>
-                </div>
-
-                <div id="summaryView">
-                    <div class="mb-6 flex flex-wrap gap-4 items-center">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">View Period:</label>
-                            <select id="periodFilter" onchange="updateDashboard()" class="border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-                                <option value="daily">Daily</option>
-                                <option value="weekly">Weekly</option>
-                                <option value="monthly">Monthly</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Select Date:</label>
-                            <input type="date" id="dashboardDate" onchange="updateDashboard()" class="border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" style="color-scheme: dark;">
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                        <div class="bg-blue-50 dark:bg-gray-700 rounded-lg p-4 text-center">
-                            <div class="text-2xl font-bold text-blue-600 dark:text-blue-400" id="dashStudentPresent">0</div>
-                            <div class="text-sm text-blue-800 dark:text-blue-300">Students Present</div>
-                        </div>
-                        <div class="bg-red-50 dark:bg-gray-700 rounded-lg p-4 text-center">
-                            <div class="text-2xl font-bold text-red-600 dark:text-red-400" id="dashStudentAbsent">0</div>
-                            <div class="text-sm text-red-800 dark:text-red-300">Students Absent</div>
-                        </div>
-                        <div class="bg-green-50 dark:bg-gray-700 rounded-lg p-4 text-center">
-                            <div class="text-2xl font-bold text-green-600 dark:text-green-400" id="dashTeacherPresent">0</div>
-                            <div class="text-sm text-green-800 dark:text-green-300">Teachers Present</div>
-                        </div>
-                        <div class="bg-orange-50 dark:bg-gray-700 rounded-lg p-4 text-center">
-                            <div class="text-2xl font-bold text-orange-600 dark:text-orange-400" id="dashTeacherAbsent">0</div>
-                            <div class="text-sm text-orange-800 dark:text-orange-300">Teachers Absent</div>
-                        </div>
-                    </div>
-
-                    <div class="grid md:grid-cols-2 gap-6">
-                        <div>
-                            <h3 class="text-lg font-semibold mb-3 text-gray-700 dark:text-gray-200">Student Attendance Report</h3>
-                            <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 max-h-64 overflow-y-auto">
-                                <div id="studentReport" class="space-y-2">
-                                    </div>
-                            </div>
-                        </div>
-                        <div>
-                            <h3 class="text-lg font-semibold mb-3 text-gray-700 dark:text-gray-200">Teacher Attendance Report</h3>
-                            <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 max-h-64 overflow-y-auto">
-                                <div id="teacherReport" class="space-y-2">
-                                    </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div id="recordsView" class="hidden">
-                    <div class="mb-4 flex flex-wrap gap-4 items-center">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">From Date:</label>
-                            <input type="date" id="recordsFromDate" onchange="loadDetailedRecords()" class="border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" style="color-scheme: dark;">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">To Date:</label>
-                            <input type="date" id="recordsToDate" onchange="loadDetailedRecords()" class="border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" style="color-scheme: dark;">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Type:</label>
-                            <select id="recordsType" onchange="loadDetailedRecords()" class="border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-                                <option value="all">All</option>
-                                <option value="students">Students Only</option>
-                                <option value="teachers">Teachers Only</option>
-                            </select>
-                        </div>
-                    </div>
-                    
-                    <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 max-h-96 overflow-y-auto">
-                        <div id="detailedRecords">
-                            </div>
-                    </div>
-                </div>
-
-                <div id="individualView" class="hidden">
-                    <div class="mb-4 flex flex-wrap gap-4 items-center">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Select Person:</label>
-                            <select id="individualSelect" onchange="loadIndividualHistory()" class="border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-                                <option value="">Choose a person</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">From Date:</label>
-                            <input type="date" id="individualFromDate" onchange="loadIndividualHistory()" class="border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" style="color-scheme: dark;">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">To Date:</label>
-                            <input type="date" id="individualToDate" onchange="loadIndividualHistory()" class="border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" style="color-scheme: dark;">
-                        </div>
-                    </div>
-                    
-                    <div id="individualStats" class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4 hidden">
-                        <div class="bg-blue-50 dark:bg-gray-700 rounded-lg p-3 text-center">
-                            <div class="text-xl font-bold text-blue-600 dark:text-blue-400" id="individualPresent">0</div>
-                            <div class="text-xs text-blue-800 dark:text-blue-300">Present Days</div>
-                        </div>
-                        <div class="bg-red-50 dark:bg-gray-700 rounded-lg p-3 text-center">
-                            <div class="text-xl font-bold text-red-600 dark:text-red-400" id="individualAbsent">0</div>
-                            <div class="text-xs text-red-800 dark:text-red-300">Absent Days</div>
-                        </div>
-                        <div class="bg-green-50 dark:bg-gray-700 rounded-lg p-3 text-center">
-                            <div class="text-xl font-bold text-green-600 dark:text-green-400" id="individualPercentage">0%</div>
-                            <div class="text-xs text-green-800 dark:text-green-300">Attendance Rate</div>
-                        </div>
-                        <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-3 text-center">
-                            <div class="text-xl font-bold text-gray-600 dark:text-gray-300" id="individualTotal">0</div>
-                            <div class="text-xs text-gray-800 dark:text-gray-200">Total Days</div>
-                        </div>
-                    </div>
-                    
-                    <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 max-h-64 overflow-y-auto">
-                        <div id="individualHistory">
-                            </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script>
+</div>
+<div id="summaryView">
+<div class="mb-6 flex flex-wrap gap-4 items-center">
+<div>
+<label class="block text-sm font-medium text-gray-700 mb-1">View Period:</label>
+<select class="border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" id="periodFilter" onchange="updateDashboard()">
+<option value="daily">Daily</option>
+<option value="weekly">Weekly</option>
+<option value="monthly">Monthly</option>
+</select>
+</div>
+<div>
+<label class="block text-sm font-medium text-gray-700 mb-1">Select Date:</label>
+<input class="border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" id="dashboardDate" onchange="updateDashboard()" type="date"/>
+</div>
+</div>
+<div class="grid md:grid-cols-4 gap-4 mb-6">
+<div class="bg-blue-50 rounded-lg p-4 text-center">
+<div class="text-2xl font-bold text-blue-600" id="dashStudentPresent">0</div>
+<div class="text-sm text-blue-800">Students Present</div>
+</div>
+<div class="bg-red-50 rounded-lg p-4 text-center">
+<div class="text-2xl font-bold text-red-600" id="dashStudentAbsent">0</div>
+<div class="text-sm text-red-800">Students Absent</div>
+</div>
+<div class="bg-green-50 rounded-lg p-4 text-center">
+<div class="text-2xl font-bold text-green-600" id="dashTeacherPresent">0</div>
+<div class="text-sm text-green-800">Teachers Present</div>
+</div>
+<div class="bg-orange-50 rounded-lg p-4 text-center">
+<div class="text-2xl font-bold text-orange-600" id="dashTeacherAbsent">0</div>
+<div class="text-sm text-orange-800">Teachers Absent</div>
+</div>
+</div>
+<div class="grid md:grid-cols-2 gap-6">
+<div>
+<h3 class="text-lg font-semibold mb-3 text-gray-700">Student Attendance Report</h3>
+<div class="bg-gray-50 rounded-lg p-4 max-h-64 overflow-y-auto">
+<div class="space-y-2" id="studentReport">
+</div>
+</div>
+</div>
+<div>
+<h3 class="text-lg font-semibold mb-3 text-gray-700">Teacher Attendance Report</h3>
+<div class="bg-gray-50 rounded-lg p-4 max-h-64 overflow-y-auto">
+<div class="space-y-2" id="teacherReport">
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="hidden" id="recordsView">
+<div class="mb-4 flex flex-wrap gap-4 items-center">
+<div>
+<label class="block text-sm font-medium text-gray-700 mb-1">From Date:</label>
+<input class="border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" id="recordsFromDate" onchange="loadDetailedRecords()" type="date"/>
+</div>
+<div>
+<label class="block text-sm font-medium text-gray-700 mb-1">To Date:</label>
+<input class="border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" id="recordsToDate" onchange="loadDetailedRecords()" type="date"/>
+</div>
+<div>
+<label class="block text-sm font-medium text-gray-700 mb-1">Type:</label>
+<select class="border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" id="recordsType" onchange="loadDetailedRecords()">
+<option value="all">All</option>
+<option value="students">Students Only</option>
+<option value="teachers">Teachers Only</option>
+</select>
+</div>
+</div>
+<div class="bg-gray-50 rounded-lg p-4 max-h-96 overflow-y-auto">
+<div id="detailedRecords">
+</div>
+</div>
+</div>
+<div class="hidden" id="individualView">
+<div class="mb-4 flex flex-wrap gap-4 items-center">
+<div>
+<label class="block text-sm font-medium text-gray-700 mb-1">Select Person:</label>
+<select class="border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" id="individualSelect" onchange="loadIndividualHistory()">
+<option value="">Choose a person</option>
+</select>
+</div>
+<div>
+<label class="block text-sm font-medium text-gray-700 mb-1">From Date:</label>
+<input class="border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" id="individualFromDate" onchange="loadIndividualHistory()" type="date"/>
+</div>
+<div>
+<label class="block text-sm font-medium text-gray-700 mb-1">To Date:</label>
+<input class="border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" id="individualToDate" onchange="loadIndividualHistory()" type="date"/>
+</div>
+</div>
+<div class="grid md:grid-cols-4 gap-4 mb-4 hidden" id="individualStats">
+<div class="bg-blue-50 rounded-lg p-3 text-center">
+<div class="text-xl font-bold text-blue-600" id="individualPresent">0</div>
+<div class="text-xs text-blue-800">Present Days</div>
+</div>
+<div class="bg-red-50 rounded-lg p-3 text-center">
+<div class="text-xl font-bold text-red-600" id="individualAbsent">0</div>
+<div class="text-xs text-red-800">Absent Days</div>
+</div>
+<div class="bg-green-50 rounded-lg p-3 text-center">
+<div class="text-xl font-bold text-green-600" id="individualPercentage">0%</div>
+<div class="text-xs text-green-800">Attendance Rate</div>
+</div>
+<div class="bg-gray-50 rounded-lg p-3 text-center">
+<div class="text-xl font-bold text-gray-600" id="individualTotal">0</div>
+<div class="text-xs text-gray-800">Total Days</div>
+</div>
+</div>
+<div class="bg-gray-50 rounded-lg p-4 max-h-64 overflow-y-auto">
+<div id="individualHistory">
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<script>
         // Database simulation using localStorage with permanent date-wise storage
         class AttendanceDB {
             constructor() {
@@ -731,47 +695,8 @@
         let currentUser = null;
         let userType = null;
 
-        // DARK MODE CHANGE: Define global vars for theme toggle
-        let themeSunIcon, themeMoonIcon;
-
-        // DARK MODE CHANGE: New function to toggle dark mode
-        function toggleDarkMode() {
-            const isDark = document.documentElement.classList.toggle('dark');
-            if (isDark) {
-                localStorage.setItem('theme', 'dark');
-                themeSunIcon.classList.remove('hidden');
-                themeMoonIcon.classList.add('hidden');
-            } else {
-                localStorage.setItem('theme', 'light');
-                themeSunIcon.classList.add('hidden');
-                themeMoonIcon.classList.remove('hidden');
-            }
-        }
-
-        // DARK MODE CHANGE: New function to apply initial theme
-        function applyInitialTheme() {
-            const userTheme = localStorage.getItem('theme');
-            const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches;
-
-            if (userTheme === 'dark' || (!userTheme && systemTheme)) {
-                document.documentElement.classList.add('dark');
-                themeSunIcon.classList.remove('hidden');
-                themeMoonIcon.classList.add('hidden');
-            } else {
-                document.documentElement.classList.remove('dark');
-                themeSunIcon.classList.add('hidden');
-                themeMoonIcon.classList.remove('hidden');
-            }
-        }
-
-
         // Initialize the application
         function initializeApp() {
-            // DARK MODE CHANGE: Initialize theme toggle elements and apply theme
-            themeSunIcon = document.getElementById('theme-icon-sun');
-            themeMoonIcon = document.getElementById('theme-icon-moon');
-            applyInitialTheme();
-
             showLoginScreen();
         }
 
@@ -848,16 +773,16 @@
             
             if (mode === 'select') {
                 selectBtn.classList.add('bg-blue-500', 'text-white');
-                selectBtn.classList.remove('bg-gray-300', 'text-gray-700', 'dark:bg-gray-600', 'dark:text-gray-100');
-                typeBtn.classList.add('bg-gray-300', 'text-gray-700', 'dark:bg-gray-600', 'dark:text-gray-100');
+                selectBtn.classList.remove('bg-gray-300', 'text-gray-700');
+                typeBtn.classList.add('bg-gray-300', 'text-gray-700');
                 typeBtn.classList.remove('bg-blue-500', 'text-white');
                 selectField.classList.remove('hidden');
                 inputField.classList.add('hidden');
                 inputField.value = '';
             } else {
                 typeBtn.classList.add('bg-blue-500', 'text-white');
-                typeBtn.classList.remove('bg-gray-300', 'text-gray-700', 'dark:bg-gray-600', 'dark:text-gray-100');
-                selectBtn.classList.add('bg-gray-300', 'text-gray-700', 'dark:bg-gray-600', 'dark:text-gray-100');
+                typeBtn.classList.remove('bg-gray-300', 'text-gray-700');
+                selectBtn.classList.add('bg-gray-300', 'text-gray-700');
                 selectBtn.classList.remove('bg-blue-500', 'text-white');
                 selectField.classList.add('hidden');
                 inputField.classList.remove('hidden');
@@ -873,16 +798,16 @@
             
             if (mode === 'select') {
                 selectBtn.classList.add('bg-green-500', 'text-white');
-                selectBtn.classList.remove('bg-gray-300', 'text-gray-700', 'dark:bg-gray-600', 'dark:text-gray-100');
-                typeBtn.classList.add('bg-gray-300', 'text-gray-700', 'dark:bg-gray-600', 'dark:text-gray-100');
+                selectBtn.classList.remove('bg-gray-300', 'text-gray-700');
+                typeBtn.classList.add('bg-gray-300', 'text-gray-700');
                 typeBtn.classList.remove('bg-green-500', 'text-white');
                 selectField.classList.remove('hidden');
                 inputField.classList.add('hidden');
                 inputField.value = '';
             } else {
                 typeBtn.classList.add('bg-green-500', 'text-white');
-                typeBtn.classList.remove('bg-gray-300', 'text-gray-700', 'dark:bg-gray-600', 'dark:text-gray-100');
-                selectBtn.classList.add('bg-gray-300', 'text-gray-700', 'dark:bg-gray-600', 'dark:text-gray-100');
+                typeBtn.classList.remove('bg-gray-300', 'text-gray-700');
+                selectBtn.classList.add('bg-gray-300', 'text-gray-700');
                 selectBtn.classList.remove('bg-green-500', 'text-white');
                 selectField.classList.add('hidden');
                 inputField.classList.remove('hidden');
@@ -1045,10 +970,10 @@
                     <button onclick="showSection('student')" id="studentTab" class="px-6 py-2 rounded-md font-medium transition-all duration-200 bg-blue-500 text-white">
                         👨‍🎓 Students
                     </button>
-                    <button onclick="showSection('teacher')" id="teacherTab" class="px-6 py-2 rounded-md font-medium transition-all duration-200 text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700">
+                    <button onclick="showSection('teacher')" id="teacherTab" class="px-6 py-2 rounded-md font-medium transition-all duration-200 text-gray-600 hover:bg-gray-100">
                         👩‍🏫 Teachers
                     </button>
-                    <button onclick="showSection('dashboard')" id="dashboardTab" class="px-6 py-2 rounded-md font-medium transition-all duration-200 text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700">
+                    <button onclick="showSection('dashboard')" id="dashboardTab" class="px-6 py-2 rounded-md font-medium transition-all duration-200 text-gray-600 hover:bg-gray-100">
                         📊 Dashboard
                     </button>
                 `;
@@ -1093,7 +1018,7 @@
             // Remove active class from all tabs
             document.querySelectorAll('[id$="Tab"]').forEach(tab => {
                 tab.classList.remove('bg-blue-500', 'bg-green-500', 'text-white');
-                tab.classList.add('text-gray-600', 'hover:bg-gray-100', 'dark:text-gray-300', 'dark:hover:bg-gray-700');
+                tab.classList.add('text-gray-600', 'hover:bg-gray-100');
             });
             
             // Show selected section
@@ -1108,7 +1033,7 @@
                 } else {
                     activeTab.classList.add('bg-blue-500', 'text-white');
                 }
-                activeTab.classList.remove('text-gray-600', 'hover:bg-gray-100', 'dark:text-gray-300', 'dark:hover:bg-gray-700');
+                activeTab.classList.remove('text-gray-600', 'hover:bg-gray-100');
             }
             
             // Load appropriate content based on user type and section
@@ -1169,19 +1094,19 @@
             const statusDiv = document.getElementById('myAttendanceStatus');
             
             // Reset buttons
-            presentBtn.classList.remove('bg-green-500', 'text-white', 'cursor-not-allowed', 'opacity-50', 'dark:bg-green-600');
-            presentBtn.classList.add('bg-gray-200', 'text-gray-700', 'dark:bg-gray-600', 'dark:text-gray-200');
-            absentBtn.classList.remove('bg-red-500', 'text-white', 'cursor-not-allowed', 'opacity-50', 'dark:bg-red-600');
-            absentBtn.classList.add('bg-gray-200', 'text-gray-700', 'dark:bg-gray-600', 'dark:text-gray-200');
+            presentBtn.classList.remove('bg-green-500', 'text-white', 'cursor-not-allowed', 'opacity-50');
+            presentBtn.classList.add('bg-gray-200', 'text-gray-700');
+            absentBtn.classList.remove('bg-red-500', 'text-white', 'cursor-not-allowed', 'opacity-50');
+            absentBtn.classList.add('bg-gray-200', 'text-gray-700');
             
             // Enable buttons by default
             presentBtn.disabled = false;
             absentBtn.disabled = false;
             
             if (myStatus === 'present') {
-                presentBtn.classList.remove('bg-gray-200', 'text-gray-700', 'dark:bg-gray-600', 'dark:text-gray-200');
-                presentBtn.classList.add('bg-green-500', 'text-white', 'dark:bg-green-600');
-                statusDiv.innerHTML = '<span class="text-green-600 dark:text-green-400 font-bold">✅ You are marked Present today</span><div class="text-sm text-gray-600 dark:text-gray-400 mt-1">Attendance locked for today</div>';
+                presentBtn.classList.remove('bg-gray-200', 'text-gray-700');
+                presentBtn.classList.add('bg-green-500', 'text-white');
+                statusDiv.innerHTML = '<span class="text-green-600 font-bold">✅ You are marked Present today</span><div class="text-sm text-gray-600 mt-1">Attendance locked for today</div>';
                 
                 // Disable both buttons
                 presentBtn.disabled = true;
@@ -1190,9 +1115,9 @@
                 absentBtn.classList.add('cursor-not-allowed', 'opacity-50');
                 
             } else if (myStatus === 'absent') {
-                absentBtn.classList.remove('bg-gray-200', 'text-gray-700', 'dark:bg-gray-600', 'dark:text-gray-200');
-                absentBtn.classList.add('bg-red-500', 'text-white', 'dark:bg-red-600');
-                statusDiv.innerHTML = '<span class="text-red-600 dark:text-red-400 font-bold">❌ You are marked Absent today</span><div class="text-sm text-gray-600 dark:text-gray-400 mt-1">Attendance locked for today</div>';
+                absentBtn.classList.remove('bg-gray-200', 'text-gray-700');
+                absentBtn.classList.add('bg-red-500', 'text-white');
+                statusDiv.innerHTML = '<span class="text-red-600 font-bold">❌ You are marked Absent today</span><div class="text-sm text-gray-600 mt-1">Attendance locked for today</div>';
                 
                 // Disable both buttons
                 presentBtn.disabled = true;
@@ -1201,7 +1126,7 @@
                 absentBtn.classList.add('cursor-not-allowed', 'opacity-75');
                 
             } else {
-                statusDiv.innerHTML = '<span class="text-gray-600 dark:text-gray-300">Please mark your attendance</span>';
+                statusDiv.innerHTML = '<span class="text-gray-600">Please mark your attendance</span>';
             }
         }
 
@@ -1217,19 +1142,19 @@
             const statusDiv = document.getElementById('myTeacherAttendanceStatus');
             
             // Reset buttons
-            presentBtn.classList.remove('bg-green-500', 'text-white', 'cursor-not-allowed', 'opacity-50', 'dark:bg-green-600');
-            presentBtn.classList.add('bg-gray-200', 'text-gray-700', 'dark:bg-gray-600', 'dark:text-gray-200');
-            absentBtn.classList.remove('bg-red-500', 'text-white', 'cursor-not-allowed', 'opacity-50', 'dark:bg-red-600');
-            absentBtn.classList.add('bg-gray-200', 'text-gray-700', 'dark:bg-gray-600', 'dark:text-gray-200');
+            presentBtn.classList.remove('bg-green-500', 'text-white', 'cursor-not-allowed', 'opacity-50');
+            presentBtn.classList.add('bg-gray-200', 'text-gray-700');
+            absentBtn.classList.remove('bg-red-500', 'text-white', 'cursor-not-allowed', 'opacity-50');
+            absentBtn.classList.add('bg-gray-200', 'text-gray-700');
             
             // Enable buttons by default
             presentBtn.disabled = false;
             absentBtn.disabled = false;
             
             if (myStatus === 'present') {
-                presentBtn.classList.remove('bg-gray-200', 'text-gray-700', 'dark:bg-gray-600', 'dark:text-gray-200');
-                presentBtn.classList.add('bg-green-500', 'text-white', 'dark:bg-green-600');
-                statusDiv.innerHTML = '<span class="text-green-600 dark:text-green-400 font-bold">✅ You are marked Present today</span><div class="text-sm text-gray-600 dark:text-gray-400 mt-1">Attendance locked for today</div>';
+                presentBtn.classList.remove('bg-gray-200', 'text-gray-700');
+                presentBtn.classList.add('bg-green-500', 'text-white');
+                statusDiv.innerHTML = '<span class="text-green-600 font-bold">✅ You are marked Present today</span><div class="text-sm text-gray-600 mt-1">Attendance locked for today</div>';
                 
                 // Disable both buttons
                 presentBtn.disabled = true;
@@ -1238,9 +1163,9 @@
                 absentBtn.classList.add('cursor-not-allowed', 'opacity-50');
                 
             } else if (myStatus === 'absent') {
-                absentBtn.classList.remove('bg-gray-200', 'text-gray-700', 'dark:bg-gray-600', 'dark:text-gray-200');
-                absentBtn.classList.add('bg-red-500', 'text-white', 'dark:bg-red-600');
-                statusDiv.innerHTML = '<span class="text-red-600 dark:text-red-400 font-bold">❌ You are marked Absent today</span><div class="text-sm text-gray-600 dark:text-gray-400 mt-1">Attendance locked for today</div>';
+                absentBtn.classList.remove('bg-gray-200', 'text-gray-700');
+                absentBtn.classList.add('bg-red-500', 'text-white');
+                statusDiv.innerHTML = '<span class="text-red-600 font-bold">❌ You are marked Absent today</span><div class="text-sm text-gray-600 mt-1">Attendance locked for today</div>';
                 
                 // Disable both buttons
                 presentBtn.disabled = true;
@@ -1249,7 +1174,7 @@
                 absentBtn.classList.add('cursor-not-allowed', 'opacity-75');
                 
             } else {
-                statusDiv.innerHTML = '<span class="text-gray-600 dark:text-gray-300">Please mark your attendance</span>';
+                statusDiv.innerHTML = '<span class="text-gray-600">Please mark your attendance</span>';
             }
         }
 
@@ -1261,8 +1186,8 @@
             if (currentStatus && currentStatus !== 'not-marked') {
                 // Show warning message
                 const statusDiv = document.getElementById('myAttendanceStatus');
-                statusDiv.innerHTML = `<div class="text-orange-600 dark:text-orange-400 font-bold">⚠️ You have already marked attendance as "${currentStatus.toUpperCase()}" for today!</div>
-                                     <div class="text-sm text-gray-600 dark:text-gray-400 mt-2">You can only mark attendance once per day. Contact your teacher if you need to change it.</div>`;
+                statusDiv.innerHTML = `<div class="text-orange-600 font-bold">⚠️ You have already marked attendance as "${currentStatus.toUpperCase()}" for today!</div>
+                                     <div class="text-sm text-gray-600 mt-2">You can only mark attendance once per day. Contact your teacher if you need to change it.</div>`;
                 return;
             }
             
@@ -1272,7 +1197,7 @@
             
             // Show success message
             const statusDiv = document.getElementById('myAttendanceStatus');
-            statusDiv.innerHTML += '<div class="text-sm text-green-600 dark:text-green-400 mt-2">✓ Attendance marked successfully! You cannot change it today.</div>';
+            statusDiv.innerHTML += '<div class="text-sm text-green-600 mt-2">✓ Attendance marked successfully! You cannot change it today.</div>';
             setTimeout(() => {
                 loadMyStudentAttendance();
             }, 3000);
@@ -1286,8 +1211,8 @@
             if (currentStatus && currentStatus !== 'not-marked') {
                 // Show warning message
                 const statusDiv = document.getElementById('myTeacherAttendanceStatus');
-                statusDiv.innerHTML = `<div class="text-orange-600 dark:text-orange-400 font-bold">⚠️ You have already marked attendance as "${currentStatus.toUpperCase()}" for today!</div>
-                                     <div class="text-sm text-gray-600 dark:text-gray-400 mt-2">You can only mark attendance once per day. Contact the admin if you need to change it.</div>`;
+                statusDiv.innerHTML = `<div class="text-orange-600 font-bold">⚠️ You have already marked attendance as "${currentStatus.toUpperCase()}" for today!</div>
+                                     <div class="text-sm text-gray-600 mt-2">You can only mark attendance once per day. Contact the admin if you need to change it.</div>`;
                 return;
             }
             
@@ -1297,7 +1222,7 @@
             
             // Show success message
             const statusDiv = document.getElementById('myTeacherAttendanceStatus');
-            statusDiv.innerHTML += '<div class="text-sm text-green-600 dark:text-green-400 mt-2">✓ Attendance marked successfully! You cannot change it today.</div>';
+            statusDiv.innerHTML += '<div class="text-sm text-green-600 mt-2">✓ Attendance marked successfully! You cannot change it today.</div>';
             setTimeout(() => {
                 loadMyTeacherAttendance();
             }, 3000);
@@ -1313,21 +1238,20 @@
             students.forEach(student => {
                 const status = attendance.students[student] || 'not-marked';
                 const div = document.createElement('div');
-                // DARK MODE CHANGE: Added dark styles to dynamically created element
-                div.className = 'flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg';
+                div.className = 'flex items-center justify-between p-3 bg-gray-50 rounded-lg';
                 div.innerHTML = `
-                    <span class="font-medium text-gray-700 dark:text-gray-200">${student}</span>
+                    <span class="font-medium text-gray-700">${student}</span>
                     <div class="flex space-x-2">
                         <button onclick="markAttendance('students', '${student}', 'present')" 
-                                class="px-3 py-1 rounded-md text-sm font-medium transition-all duration-200 ${status === 'present' ? 'bg-green-500 text-white' : 'bg-gray-200 text-gray-700 hover:bg-green-100 dark:bg-gray-600 dark:text-gray-200 dark:hover:bg-green-700'}">
+                                class="px-3 py-1 rounded-md text-sm font-medium transition-all duration-200 ${status === 'present' ? 'bg-green-500 text-white' : 'bg-gray-200 text-gray-700 hover:bg-green-100'}">
                             Present
                         </button>
                         <button onclick="markAttendance('students', '${student}', 'absent')" 
-                                class="px-3 py-1 rounded-md text-sm font-medium transition-all duration-200 ${status === 'absent' ? 'bg-red-500 text-white' : 'bg-gray-200 text-gray-700 hover:bg-red-100 dark:bg-gray-600 dark:text-gray-200 dark:hover:bg-red-700'}">
+                                class="px-3 py-1 rounded-md text-sm font-medium transition-all duration-200 ${status === 'absent' ? 'bg-red-500 text-white' : 'bg-gray-200 text-gray-700 hover:bg-red-100'}">
                             Absent
                         </button>
                         <button onclick="removeStudent('${student}')" 
-                                class="px-2 py-1 rounded-md text-sm font-medium bg-gray-300 text-gray-700 hover:bg-red-200 transition-all duration-200 dark:bg-gray-500 dark:text-gray-100 dark:hover:bg-red-800" title="Remove student">
+                                class="px-2 py-1 rounded-md text-sm font-medium bg-gray-300 text-gray-700 hover:bg-red-200 transition-all duration-200" title="Remove student">
                             ✕
                         </button>
                     </div>
@@ -1348,21 +1272,20 @@
             teachers.forEach(teacher => {
                 const status = attendance.teachers[teacher] || 'not-marked';
                 const div = document.createElement('div');
-                // DARK MODE CHANGE: Added dark styles to dynamically created element
-                div.className = 'flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg';
+                div.className = 'flex items-center justify-between p-3 bg-gray-50 rounded-lg';
                 div.innerHTML = `
-                    <span class="font-medium text-gray-700 dark:text-gray-200">${teacher}</span>
+                    <span class="font-medium text-gray-700">${teacher}</span>
                     <div class="flex space-x-2">
                         <button onclick="markAttendance('teachers', '${teacher}', 'present')" 
-                                class="px-3 py-1 rounded-md text-sm font-medium transition-all duration-200 ${status === 'present' ? 'bg-green-500 text-white' : 'bg-gray-200 text-gray-700 hover:bg-green-100 dark:bg-gray-600 dark:text-gray-200 dark:hover:bg-green-700'}">
+                                class="px-3 py-1 rounded-md text-sm font-medium transition-all duration-200 ${status === 'present' ? 'bg-green-500 text-white' : 'bg-gray-200 text-gray-700 hover:bg-green-100'}">
                             Present
                         </button>
                         <button onclick="markAttendance('teachers', '${teacher}', 'absent')" 
-                                class="px-3 py-1 rounded-md text-sm font-medium transition-all duration-200 ${status === 'absent' ? 'bg-red-500 text-white' : 'bg-gray-200 text-gray-700 hover:bg-red-100 dark:bg-gray-600 dark:text-gray-200 dark:hover:bg-red-700'}">
+                                class="px-3 py-1 rounded-md text-sm font-medium transition-all duration-200 ${status === 'absent' ? 'bg-red-500 text-white' : 'bg-gray-200 text-gray-700 hover:bg-red-100'}">
                             Absent
                         </button>
                         <button onclick="removeTeacher('${teacher}')" 
-                                class="px-2 py-1 rounded-md text-sm font-medium bg-gray-300 text-gray-700 hover:bg-red-200 transition-all duration-200 dark:bg-gray-500 dark:text-gray-100 dark:hover:bg-red-800" title="Remove teacher">
+                                class="px-2 py-1 rounded-md text-sm font-medium bg-gray-300 text-gray-700 hover:bg-red-200 transition-all duration-200" title="Remove teacher">
                             ✕
                         </button>
                     </div>
@@ -1477,55 +1400,54 @@
             }
             
             const countsDiv = document.createElement('div');
-            // DARK MODE CHANGE: Added dark styles to dynamically created element
-            countsDiv.className = 'live-counts mt-4 bg-white dark:bg-gray-800 rounded-lg shadow-md p-4';
+            countsDiv.className = 'live-counts mt-4 bg-white rounded-lg shadow-md p-4';
             countsDiv.innerHTML = `
                 <div class="text-center mb-2">
-                    <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-100">📊 Today's Live Count</h3>
+                    <h3 class="text-lg font-semibold text-gray-800">📊 Today's Live Count</h3>
                 </div>
                 <div class="grid grid-cols-2 gap-4">
                     <div class="text-center">
-                        <h4 class="text-sm font-medium text-blue-700 dark:text-blue-300 mb-2">👨‍🎓 Students</h4>
+                        <h4 class="text-sm font-medium text-blue-700 mb-2">👨‍🎓 Students</h4>
                         <div class="flex justify-center space-x-4 text-sm">
                             <div class="text-center">
-                                <div class="text-xl font-bold text-green-600 dark:text-green-400">${sPresent}</div>
-                                <div class="text-xs text-green-800 dark:text-green-300">Present</div>
+                                <div class="text-xl font-bold text-green-600">${sPresent}</div>
+                                <div class="text-xs text-green-800">Present</div>
                             </div>
                             <div class="text-center">
-                                <div class="text-xl font-bold text-red-600 dark:text-red-400">${sAbsent}</div>
-                                <div class="text-xs text-red-800 dark:text-red-300">Absent</div>
+                                <div class="text-xl font-bold text-red-600">${sAbsent}</div>
+                                <div class="text-xs text-red-800">Absent</div>
                             </div>
                             <div class="text-center">
-                                <div class="text-xl font-bold text-gray-600 dark:text-gray-300">${sNotMarked}</div>
-                                <div class="text-xs text-gray-800 dark:text-gray-200">Not Marked</div>
+                                <div class="text-xl font-bold text-gray-600">${sNotMarked}</div>
+                                <div class="text-xs text-gray-800">Not Marked</div>
                             </div>
                         </div>
-                        <div class="text-xs text-blue-600 dark:text-blue-400 mt-1">Total: ${sPresent + sAbsent + sNotMarked}</div>
+                        <div class="text-xs text-blue-600 mt-1">Total: ${sPresent + sAbsent + sNotMarked}</div>
                     </div>
                     <div class="text-center">
-                        <h4 class="text-sm font-medium text-green-700 dark:text-green-300 mb-2">👩‍🏫 Teachers</h4>
+                        <h4 class="text-sm font-medium text-green-700 mb-2">👩‍🏫 Teachers</h4>
                         <div class="flex justify-center space-x-4 text-sm">
                             <div class="text-center">
-                                <div class="text-xl font-bold text-green-600 dark:text-green-400">${tPresent}</div>
-                                <div class="text-xs text-green-800 dark:text-green-300">Present</div>
+                                <div class="text-xl font-bold text-green-600">${tPresent}</div>
+                                <div class="text-xs text-green-800">Present</div>
                             </div>
                             <div class="text-center">
-                                <div class="text-xl font-bold text-red-600 dark:text-red-400">${tAbsent}</div>
-                                <div class="text-xs text-red-800 dark:text-red-300">Absent</div>
+                                <div class="text-xl font-bold text-red-600">${tAbsent}</div>
+                                <div class="text-xs text-red-800">Absent</div>
                             </div>
                             <div class="text-center">
-                                <div class="text-xl font-bold text-gray-600 dark:text-gray-300">${tNotMarked}</div>
-                                <div class="text-xs text-gray-800 dark:text-gray-200">Not Marked</div>
+                                <div class="text-xl font-bold text-gray-600">${tNotMarked}</div>
+                                <div class="text-xs text-gray-800">Not Marked</div>
                             </div>
                         </div>
-                        <div class="text-xs text-green-600 dark:text-green-400 mt-1">Total: ${tPresent + tAbsent + tNotMarked}</div>
+                        <div class="text-xs text-green-600 mt-1">Total: ${tPresent + tAbsent + tNotMarked}</div>
                     </div>
                 </div>
-                <div class="text-center mt-3 pt-3 border-t border-gray-200 dark:border-gray-700">
-                    <div class="text-sm font-medium text-gray-700 dark:text-gray-200">
-                        📈 Overall: <span class="text-green-600 dark:text-green-400">${sPresent + tPresent} Present</span> | 
-                        <span class="text-red-600 dark:text-red-400">${sAbsent + tAbsent} Absent</span> | 
-                        <span class="text-gray-600 dark:text-gray-300">${sNotMarked + tNotMarked} Pending</span>
+                <div class="text-center mt-3 pt-3 border-t">
+                    <div class="text-sm font-medium text-gray-700">
+                        📈 Overall: <span class="text-green-600">${sPresent + tPresent} Present</span> | 
+                        <span class="text-red-600">${sAbsent + tAbsent} Absent</span> | 
+                        <span class="text-gray-600">${sNotMarked + tNotMarked} Pending</span>
                     </div>
                 </div>
             `;
@@ -1541,26 +1463,26 @@
             
             // Reset button styles
             document.getElementById('summaryViewBtn').classList.remove('bg-blue-500', 'text-white');
-            document.getElementById('summaryViewBtn').classList.add('bg-gray-300', 'text-gray-700', 'dark:bg-gray-600', 'dark:text-gray-100');
+            document.getElementById('summaryViewBtn').classList.add('bg-gray-300', 'text-gray-700');
             document.getElementById('recordsViewBtn').classList.remove('bg-blue-500', 'text-white');
-            document.getElementById('recordsViewBtn').classList.add('bg-gray-300', 'text-gray-700', 'dark:bg-gray-600', 'dark:text-gray-100');
+            document.getElementById('recordsViewBtn').classList.add('bg-gray-300', 'text-gray-700');
             document.getElementById('individualViewBtn').classList.remove('bg-blue-500', 'text-white');
-            document.getElementById('individualViewBtn').classList.add('bg-gray-300', 'text-gray-700', 'dark:bg-gray-600', 'dark:text-gray-100');
+            document.getElementById('individualViewBtn').classList.add('bg-gray-300', 'text-gray-700');
             
             // Show selected view and activate button
             if (view === 'summary') {
                 document.getElementById('summaryView').classList.remove('hidden');
-                document.getElementById('summaryViewBtn').classList.remove('bg-gray-300', 'text-gray-700', 'dark:bg-gray-600', 'dark:text-gray-100');
+                document.getElementById('summaryViewBtn').classList.remove('bg-gray-300', 'text-gray-700');
                 document.getElementById('summaryViewBtn').classList.add('bg-blue-500', 'text-white');
                 updateDashboard();
             } else if (view === 'records') {
                 document.getElementById('recordsView').classList.remove('hidden');
-                document.getElementById('recordsViewBtn').classList.remove('bg-gray-300', 'text-gray-700', 'dark:bg-gray-600', 'dark:text-gray-100');
+                document.getElementById('recordsViewBtn').classList.remove('bg-gray-300', 'text-gray-700');
                 document.getElementById('recordsViewBtn').classList.add('bg-blue-500', 'text-white');
                 initializeRecordsView();
             } else if (view === 'individual') {
                 document.getElementById('individualView').classList.remove('hidden');
-                document.getElementById('individualViewBtn').classList.remove('bg-gray-300', 'text-gray-700', 'dark:bg-gray-600', 'dark:text-gray-100');
+                document.getElementById('individualViewBtn').classList.remove('bg-gray-300', 'text-gray-700');
                 document.getElementById('individualViewBtn').classList.add('bg-blue-500', 'text-white');
                 initializeIndividualView();
             }
@@ -1621,7 +1543,7 @@
             container.innerHTML = '';
             
             if (Object.keys(records).length === 0) {
-                container.innerHTML = '<p class="text-gray-500 dark:text-gray-400 text-center py-4">No attendance records found for this period</p>';
+                container.innerHTML = '<p class="text-gray-500 text-center py-4">No attendance records found for this period</p>';
                 return;
             }
             
@@ -1631,8 +1553,7 @@
             sortedDates.forEach(date => {
                 const dayRecord = records[date];
                 const dateDiv = document.createElement('div');
-                // DARK MODE CHANGE: Added dark styles to dynamically created element
-                dateDiv.className = 'mb-4 border-b border-gray-200 dark:border-gray-600 pb-4';
+                dateDiv.className = 'mb-4 border-b pb-4';
                 
                 const formattedDate = new Date(date).toLocaleDateString('en-US', {
                     weekday: 'long',
@@ -1641,17 +1562,17 @@
                     day: 'numeric'
                 });
                 
-                let content = `<h4 class="font-semibold text-gray-800 dark:text-gray-100 mb-2">📅 ${formattedDate}</h4>`;
+                let content = `<h4 class="font-semibold text-gray-800 mb-2">📅 ${formattedDate}</h4>`;
                 
                 // Students section
                 if (type === 'all' || type === 'students') {
                     const studentEntries = Object.entries(dayRecord.students || {});
                     if (studentEntries.length > 0) {
-                        content += '<div class="mb-2"><h5 class="font-medium text-blue-700 dark:text-blue-300 mb-1">👨‍🎓 Students:</h5>';
+                        content += '<div class="mb-2"><h5 class="font-medium text-blue-700 mb-1">👨‍🎓 Students:</h5>';
                         content += '<div class="grid grid-cols-2 gap-2 text-sm">';
                         studentEntries.forEach(([name, status]) => {
                             const statusIcon = status === 'present' ? '✅' : '❌';
-                            const statusColor = status === 'present' ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400';
+                            const statusColor = status === 'present' ? 'text-green-600' : 'text-red-600';
                             content += `<div class="flex justify-between"><span>${name}</span><span class="${statusColor}">${statusIcon} ${status}</span></div>`;
                         });
                         content += '</div></div>';
@@ -1662,11 +1583,11 @@
                 if (type === 'all' || type === 'teachers') {
                     const teacherEntries = Object.entries(dayRecord.teachers || {});
                     if (teacherEntries.length > 0) {
-                        content += '<div><h5 class="font-medium text-green-700 dark:text-green-300 mb-1">👩‍🏫 Teachers:</h5>';
+                        content += '<div><h5 class="font-medium text-green-700 mb-1">👩‍🏫 Teachers:</h5>';
                         content += '<div class="grid grid-cols-2 gap-2 text-sm">';
                         teacherEntries.forEach(([name, status]) => {
                             const statusIcon = status === 'present' ? '✅' : '❌';
-                            const statusColor = status === 'present' ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400';
+                            const statusColor = status === 'present' ? 'text-green-600' : 'text-red-600';
                             content += `<div class="flex justify-between"><span>${name}</span><span class="${statusColor}">${statusIcon} ${status}</span></div>`;
                         });
                         content += '</div></div>';
@@ -1727,8 +1648,7 @@
             
             // Update percentage color
             const percentageElement = document.getElementById('individualPercentage');
-            // DARK MODE CHANGE: Added dark styles for percentage
-            percentageElement.className = `text-xl font-bold ${percentage >= 75 ? 'text-green-600 dark:text-green-400' : percentage >= 50 ? 'text-yellow-600 dark:text-yellow-400' : 'text-red-600 dark:text-red-400'}`;
+            percentageElement.className = `text-xl font-bold ${percentage >= 75 ? 'text-green-600' : percentage >= 50 ? 'text-yellow-600' : 'text-red-600'}`;
             
             document.getElementById('individualStats').classList.remove('hidden');
             
@@ -1737,14 +1657,13 @@
             historyContainer.innerHTML = '';
             
             if (historyData.length === 0) {
-                historyContainer.innerHTML = '<p class="text-gray-500 dark:text-gray-400 text-center py-4">No attendance records found for this person in the selected period</p>';
+                historyContainer.innerHTML = '<p class="text-gray-500 text-center py-4">No attendance records found for this person in the selected period</p>';
                 return;
             }
             
             historyData.reverse().forEach(record => {
                 const div = document.createElement('div');
-                // DARK MODE CHANGE: Added dark styles to dynamically created element
-                div.className = 'flex justify-between items-center p-2 bg-white dark:bg-gray-600 rounded border border-gray-200 dark:border-gray-500 mb-2';
+                div.className = 'flex justify-between items-center p-2 bg-white rounded border mb-2';
                 
                 const formattedDate = new Date(record.date).toLocaleDateString('en-US', {
                     weekday: 'short',
@@ -1754,7 +1673,7 @@
                 });
                 
                 const statusIcon = record.status === 'present' ? '✅' : '❌';
-                const statusColor = record.status === 'present' ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400';
+                const statusColor = record.status === 'present' ? 'text-green-600' : 'text-red-600';
                 
                 div.innerHTML = `
                     <span class="font-medium text-sm">${formattedDate}</span>
@@ -1842,13 +1761,12 @@
                 if (total > 0) {
                     const percentage = Math.round((present / total) * 100);
                     const div = document.createElement('div');
-                    // DARK MODE CHANGE: Added dark styles to dynamically created element
-                    div.className = 'flex justify-between items-center p-2 bg-white dark:bg-gray-600 rounded border border-gray-200 dark:border-gray-500';
+                    div.className = 'flex justify-between items-center p-2 bg-white rounded border';
                     div.innerHTML = `
                         <span class="font-medium text-sm">${student}</span>
                         <div class="text-right">
-                            <div class="text-sm font-medium ${percentage >= 75 ? 'text-green-600 dark:text-green-400' : percentage >= 50 ? 'text-yellow-600 dark:text-yellow-400' : 'text-red-600 dark:text-red-400'}">${percentage}%</div>
-                            <div class="text-xs text-gray-500 dark:text-gray-300">${present}/${total} days</div>
+                            <div class="text-sm font-medium ${percentage >= 75 ? 'text-green-600' : percentage >= 50 ? 'text-yellow-600' : 'text-red-600'}">${percentage}%</div>
+                            <div class="text-xs text-gray-500">${present}/${total} days</div>
                         </div>
                     `;
                     studentReportContainer.appendChild(div);
@@ -1871,13 +1789,12 @@
                 if (total > 0) {
                     const percentage = Math.round((present / total) * 100);
                     const div = document.createElement('div');
-                    // DARK MODE CHANGE: Added dark styles to dynamically created element
-                    div.className = 'flex justify-between items-center p-2 bg-white dark:bg-gray-600 rounded border border-gray-200 dark:border-gray-500';
+                    div.className = 'flex justify-between items-center p-2 bg-white rounded border';
                     div.innerHTML = `
                         <span class="font-medium text-sm">${teacher}</span>
                         <div class="text-right">
-                            <div class="text-sm font-medium ${percentage >= 75 ? 'text-green-600 dark:text-green-400' : percentage >= 50 ? 'text-yellow-600 dark:text-yellow-400' : 'text-red-600 dark:text-red-400'}">${percentage}%</div>
-                            <div class="text-xs text-gray-500 dark:text-gray-300">${present}/${total} days</div>
+                            <div class="text-sm font-medium ${percentage >= 75 ? 'text-green-600' : percentage >= 50 ? 'text-yellow-600' : 'text-red-600'}">${percentage}%</div>
+                            <div class="text-xs text-gray-500">${present}/${total} days</div>
                         </div>
                     `;
                     teacherReportContainer.appendChild(div);
@@ -1886,10 +1803,10 @@
             
             // Show message if no data
             if (studentReportContainer.children.length === 0) {
-                studentReportContainer.innerHTML = '<p class="text-gray-500 dark:text-gray-400 text-center py-4">No attendance data for this period</p>';
+                studentReportContainer.innerHTML = '<p class="text-gray-500 text-center py-4">No attendance data for this period</p>';
             }
             if (teacherReportContainer.children.length === 0) {
-                teacherReportContainer.innerHTML = '<p class="text-gray-500 dark:text-gray-400 text-center py-4">No attendance data for this period</p>';
+                teacherReportContainer.innerHTML = '<p class="text-gray-500 text-center py-4">No attendance data for this period</p>';
             }
         }
 
@@ -2002,7 +1919,7 @@
                 `;
             } else {
                 document.getElementById('backupStatus').innerHTML = `
-                    <div class="text-red-600 dark:text-red-400">❌ No backup found</div>
+                    <div class="text-red-600">❌ No backup found</div>
                 `;
             }
             
@@ -2033,5 +1950,43 @@
         // Initialize the app when page loads
         document.addEventListener('DOMContentLoaded', initializeApp);
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9948ad69d1a53226',t:'MTc2MTQ2ODMyNS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9948ad69d1a53226',t:'MTc2MTQ2ODMyNS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script><script>
+// UPDATED THEME SCRIPT
+function applyTheme(theme) {
+  if (theme === 'dark') {
+    document.documentElement.classList.add('dark');
+    document.body.classList.add('dark');
+  } else {
+    document.documentElement.classList.remove('dark');
+    document.body.classList.remove('dark');
+  }
+}
+
+function initTheme() {
+  const selector = document.getElementById('themeSelector');
+  let saved = localStorage.getItem('themeMode') || 'light'; // Default to light
+
+  // If 'system' is somehow still saved in localStorage, default to 'light'
+  if (saved === 'system') {
+    saved = 'light';
+    localStorage.setItem('themeMode', 'light');
+  }
+  
+  selector.value = saved;
+  applyTheme(saved);
+
+  selector.onchange = function() {
+    localStorage.setItem('themeMode', this.value);
+    applyTheme(this.value);
+  };
+  
+  // System preference listener removed
+}
+
+if(document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initTheme);
+} else {
+  initTheme();
+}
+</script></body>
 </html>
